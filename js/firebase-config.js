@@ -48,12 +48,16 @@ function initializeFirebase() {
       });
     }
     
-    return true;
+    return { app, db, auth, analytics };
+    
   } catch (error) {
     console.error('❌ Erro ao inicializar Firebase:', error);
-    return false;
+    throw error;
   }
 }
+
+// Exportar para módulos ES6
+export { initializeFirebase, db, auth, app, analytics };
 
 // Função para verificar status da conexão
 function checkFirebaseConnection() {
