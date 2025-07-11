@@ -1,0 +1,2002 @@
+/* Importando fonte moderna */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Reset e configurações globais */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --accent: #00d4ff;
+  --dark: #1a1a2e;
+  --darker: #16213e;
+  --light: #f8f9fa;
+  --text-primary: #ffffff;
+  --text-secondary: #b3b3b3;
+  --success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  --info: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.4);
+  --border-radius: 15px;
+}
+
+body {
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+  background: var(--dark);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* Navbar moderna */
+.navbar {
+  background: var(--primary) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  background: linear-gradient(45deg, #fff, #00d4ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+}
+
+#logoutBtn {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+#logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Sidebar moderna */
+.sidebar {
+  height: 100vh;
+  background: var(--darker);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  pointer-events: none;
+}
+
+.sidebar .nav-link {
+  color: var(--text-secondary);
+  padding: 15px 20px;
+  margin: 5px 10px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--primary);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.sidebar .nav-link:hover::before,
+.sidebar .nav-link.active::before {
+  left: 0;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  color: var(--text-primary);
+  transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.sidebar .nav-link span {
+  margin-right: 10px;
+  font-size: 1.1rem;
+}
+
+/* Main content */
+main {
+  background: var(--dark);
+  min-height: 100vh;
+  padding: 30px !important;
+}
+
+main h2 {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-bottom: 10px;
+  background: linear-gradient(45deg, #fff, #00d4ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2.5rem;
+}
+
+main p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+/* Cards modernos */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  pointer-events: none;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-hover);
+}
+
+.card.bg-success {
+  background: var(--success) !important;
+}
+
+.card.bg-info {
+  background: var(--info) !important;
+}
+
+.card.bg-warning {
+  background: var(--warning) !important;
+}
+
+.card-body {
+  padding: 25px;
+  position: relative;
+  z-index: 1;
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.card-text {
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos adicionais para botões modernos */
+.btn-outline-primary {
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  background: rgba(0, 212, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background: var(--accent);
+  color: var(--dark);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+}
+
+.btn-outline-success {
+  border: 2px solid #00f2fe;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-success:hover {
+  background: #00f2fe;
+  color: var(--dark);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+}
+
+/* Navbar toggler customizado */
+.navbar-toggler {
+  border: none;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+}
+
+/* Progress bars customizadas */
+.progress {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}
+
+/* Efeitos hover para cards adicionais */
+.card:hover .progress-bar {
+  width: 100% !important;
+}
+
+/* Estilos para ícones */
+.bi {
+  font-size: 1.1rem;
+  margin-right: 8px;
+}
+
+.fs-1 .bi {
+  margin-right: 0;
+}
+
+/* Efeitos de loading */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.card:hover {
+  animation: pulse 0.6s ease;
+}
+
+/* Animações */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+
+.sidebar .nav-link {
+  animation: slideInLeft 0.6s ease forwards;
+}
+
+.sidebar .nav-link:nth-child(1) { animation-delay: 0.1s; }
+.sidebar .nav-link:nth-child(2) { animation-delay: 0.2s; }
+.sidebar .nav-link:nth-child(3) { animation-delay: 0.3s; }
+.sidebar .nav-link:nth-child(4) { animation-delay: 0.4s; }
+.sidebar .nav-link:nth-child(5) { animation-delay: 0.5s; }
+.sidebar .nav-link:nth-child(6) { animation-delay: 0.6s; }
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--darker);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Efeitos de hover gerais */
+.btn, .nav-link, .card {
+  cursor: pointer;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  main {
+    padding: 20px !important;
+  }
+  
+  main h2 {
+    font-size: 2rem;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .sidebar {
+    background: rgba(26, 26, 46, 0.95);
+    backdrop-filter: blur(10px);
+  }
+  
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  
+  .card-body {
+    padding: 20px 15px;
+  }
+  
+  .fs-2 {
+    font-size: 1.8rem !important;
+  }
+  
+  .fs-1 {
+    font-size: 2rem !important;
+  }
+  
+  .d-none.d-md-inline {
+    display: none !important;
+  }
+}
+
+/* Estilos para responsividade mobile */
+.sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100vh;
+  z-index: 9998;
+  transition: left 0.3s ease;
+  background: var(--darker);
+  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar-mobile.show {
+  left: 0;
+}
+
+.main-mobile {
+  width: 100%;
+  margin-left: 0;
+  padding: 15px;
+}
+
+/* Overlay para mobile */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9997;
+  display: none;
+}
+
+.sidebar-overlay.show {
+  display: block;
+}
+
+/* Tema claro (para implementação futura) */
+.tema-claro {
+  --dark: #ffffff;
+  --darker: #f8f9fa;
+  --text-primary: #2c3e50;
+  --text-secondary: #6c757d;
+}
+
+.tema-claro .sidebar {
+  background: var(--darker);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tema-claro .card {
+  color: var(--text-primary);
+}
+
+/* Animações adicionais */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Aplicar animações */
+.fade-in {
+  animation: slideInRight 0.6s ease forwards;
+}
+
+.bounce-in {
+  animation: bounceIn 0.8s ease forwards;
+}
+
+/* Estilos para notificações */
+.alert {
+  border: none;
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+}
+
+.alert-success {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(139, 195, 74, 0.9));
+  color: white;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.9), rgba(3, 169, 244, 0.9));
+  color: white;
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.9), rgba(255, 193, 7, 0.9));
+  color: white;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, rgba(244, 67, 54, 0.9), rgba(233, 30, 99, 0.9));
+  color: white;
+}
+
+/* Melhorias para acessibilidade */
+.nav-link:focus,
+.btn:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Efeitos de loading */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Estilos para tooltips personalizados */
+.tooltip-custom {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-custom::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--darker);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1000;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow);
+}
+
+.tooltip-custom:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Estilos para indicadores de status */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-ativo {
+  background: #4CAF50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.status-pendente {
+  background: #FF9800;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+}
+
+.status-inativo {
+  background: #9E9E9E;
+  box-shadow: 0 0 10px rgba(158, 158, 158, 0.5);
+}
+
+/* Melhorias para performance */
+.card, .nav-link, .btn {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Estilos específicos para página de clientes */
+.cliente-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  margin-right: 12px;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.table-dark th {
+  background: var(--darker);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.table td {
+  vertical-align: middle;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.btn-group .btn {
+  border-radius: 8px;
+  margin: 0 2px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.modal-content {
+  background: var(--darker);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-control, .form-select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border-radius: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+  color: var(--text-primary);
+}
+
+.form-control::placeholder {
+  color: var(--text-secondary);
+}
+
+.form-label {
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.input-group-text {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
+  border-radius: 8px 0 0 8px;
+}
+
+.input-group .form-control {
+  border-radius: 0 8px 8px 0;
+}
+
+.pagination .page-link {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  margin: 0 2px;
+  border-radius: 8px;
+}
+
+.pagination .page-item.active .page-link {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--dark);
+}
+
+.pagination .page-link:hover {
+  background: rgba(0, 212, 255, 0.2);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.table-responsive {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.card-header {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+}
+
+.card-footer {
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 20px;
+}
+
+/* Estilos para loading */
+#loadingSpinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(10px);
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Estilos para checkboxes */
+.form-check-input:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+}
+
+/* Estilos para status badges */
+.badge.bg-success {
+  background: var(--success) !important;
+}
+
+.badge.bg-warning {
+  background: var(--warning) !important;
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+}
+
+/* Animações para as linhas da tabela */
+.fade-in {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para botões de ação */
+.btn-outline-primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--dark);
+}
+
+.btn-outline-info:hover {
+  background: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+/* Estilos para modal de confirmação */
+.btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+}
+
+/* Responsividade específica para tabela */
+@media (max-width: 768px) {
+  .table-responsive {
+    font-size: 0.875rem;
+  }
+  
+  .btn-group .btn {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .badge {
+    font-size: 0.625rem;
+    padding: 4px 8px;
+  }
+  
+  .modal-dialog {
+    margin: 10px;
+  }
+  
+  .cliente-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Estilos para campos obrigatórios */
+.form-label[for="nomeCliente"]:after,
+.form-label[for="telefoneCliente"]:after {
+  content: " *";
+  color: #dc3545;
+}
+
+/* Estilos para tooltip de validação */
+.invalid-feedback {
+  display: block;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 5px;
+}
+
+/* Melhorias visuais para dropdown */
+.form-select option {
+  background: var(--darker);
+  color: var(--text-primary);
+}
+
+/* Estilos para área de texto */
+textarea.form-control {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* Hover effects para cards de estatísticas */
+.card:hover .card-body {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+/* Estilos para empty state */
+.text-center .bi-inbox {
+  opacity: 0.3;
+}
+
+/* Estilos para paginação responsiva */
+@media (max-width: 576px) {
+  .pagination {
+    justify-content: center;
+  }
+  
+  .pagination .page-item {
+    margin: 0 1px;
+  }
+  
+  .pagination .page-link {
+    padding: 6px 10px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Estilos específicos para página de motos */
+.moto-card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.moto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent);
+}
+
+.moto-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary) !important;
+}
+
+.card-header {
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 20px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Layout de grid responsivo para motos */
+@media (min-width: 1400px) {
+  .col-lg-4 {
+    flex: 0 0 auto;
+    width: 33.333333%;
+  }
+}
+
+@media (max-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+/* Estilos para badges de status */
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.badge.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.badge.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+  color: #000 !important;
+}
+
+.badge.bg-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%) !important;
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+}
+
+/* Estilos para informações da moto */
+.moto-card .row.g-2 > div {
+  margin-bottom: 8px;
+}
+
+.moto-card .text-muted {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.moto-card .fw-bold {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+/* Estilos para alertas de observações */
+.alert-info {
+  background: rgba(23, 162, 184, 0.15);
+  border: 1px solid rgba(23, 162, 184, 0.3);
+  color: #17a2b8;
+  border-radius: 8px;
+}
+
+/* Botões de ação nos cards */
+.moto-card .btn-sm {
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.btn-outline-primary:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--dark);
+  transform: translateY(-2px);
+}
+
+.btn-outline-info:hover {
+  background: #17a2b8;
+  border-color: #17a2b8;
+  transform: translateY(-2px);
+}
+
+.btn-outline-danger:hover {
+  background: #dc3545;
+  border-color: #dc3545;
+  transform: translateY(-2px);
+}
+
+/* Modal de detalhes da moto */
+.modal-lg {
+  max-width: 900px;
+}
+
+#detalhesMotoContent {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin: 10px 0;
+}
+
+#detalhesMotoContent .row > div {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+}
+
+/* Estilos para filtros */
+.card.mb-4 .card-body {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+}
+
+.input-group .form-control {
+  border-radius: 0 8px 8px 0;
+}
+
+.input-group-text {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
+  border-radius: 8px 0 0 8px;
+}
+
+/* Cards de estatísticas específicos para motos */
+.card.glow h6 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.card.glow h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Animações específicas para cards de moto */
+.moto-card.fade-in {
+  opacity: 0;
+  animation: motoCardFadeIn 0.6s ease forwards;
+}
+
+@keyframes motoCardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Estado vazio */
+.card-body.text-center.py-5 {
+  padding: 60px 20px !important;
+}
+
+.card-body.text-center.py-5 .bi-bicycle {
+  opacity: 0.3;
+  margin-bottom: 20px;
+}
+
+/* Estilos para validação de formulário */
+.form-control:invalid {
+  border-color: #dc3545;
+}
+
+.form-control:valid {
+  border-color: #28a745;
+}
+
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+}
+
+.valid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #28a745;
+}
+
+/* Melhorias para responsividade */
+@media (max-width: 576px) {
+  .moto-card .card-header {
+    padding: 12px 15px;
+  }
+  
+  .moto-card .card-body {
+    padding: 15px;
+  }
+  
+  .moto-card .btn-sm {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+  }
+  
+  .moto-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .badge {
+    font-size: 0.65rem;
+    padding: 4px 8px;
+  }
+}
+
+/* Hover effects para interatividade */
+.moto-card .card-header:hover .moto-icon {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+.moto-card:hover .badge {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+/* Estilos para campos de entrada específicos */
+#placa {
+  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+#chassi, #renavam {
+  text-transform: uppercase;
+  font-family: 'Courier New', monospace;
+}
+
+/* Loading state para cards */
+.moto-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.moto-card.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+}
+
+/* Estilos para exportação */
+#exportarBtn {
+  position: relative;
+  overflow: hidden;
+}
+
+#exportarBtn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+#exportarBtn:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* Melhorias visuais para o grid */
+.row.g-4 {
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+}
+
+.row.g-4 > * {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Estilos para campos obrigatórios no modal */
+.modal-body .form-label[for="proprietario"]:after,
+.modal-body .form-label[for="marca"]:after,
+.modal-body .form-label[for="modelo"]:after,
+.modal-body .form-label[for="ano"]:after,
+.modal-body .form-label[for="placa"]:after {
+  content: " *";
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Estilos específicos para Ordens de Serviço */
+.kanban-board {
+  min-height: 600px;
+  margin-bottom: 2rem;
+}
+
+.kanban-column {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.kanban-column:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.kanban-header {
+  padding: 1rem;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  font-weight: 600;
+  text-align: center;
+  background: var(--primary);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.kanban-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.kanban-header:hover::before {
+  left: 100%;
+}
+
+.kanban-content {
+  padding: 1rem;
+  min-height: 400px;
+  max-height: 600px;
+  overflow-y: auto;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.kanban-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.kanban-content::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.kanban-content::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.kanban-content::-webkit-scrollbar-thumb:hover {
+  background: #00a8cc;
+}
+
+.kanban-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  cursor: move;
+  position: relative;
+  overflow: hidden;
+}
+
+.kanban-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.kanban-card:hover::before {
+  transform: scaleX(1);
+}
+
+.kanban-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 212, 255, 0.3);
+  border-color: var(--accent);
+}
+
+.kanban-card .card-header {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  border-radius: 12px 12px 0 0;
+}
+
+.kanban-card .card-body {
+  padding: 1rem;
+  background: transparent;
+}
+
+.kanban-card .card-footer {
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  border-radius: 0 0 12px 12px;
+}
+
+.kanban-card .card-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.kanban-card .card-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.kanban-card .card-text:last-child {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.drag-over {
+  background: rgba(0, 212, 255, 0.1) !important;
+  border: 2px dashed var(--accent) !important;
+  transform: scale(1.02);
+}
+
+/* Badges personalizados */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.badge:hover::before {
+  left: 100%;
+}
+
+/* Botões do kanban */
+.kanban-card .btn {
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.kanban-card .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.3s;
+}
+
+.kanban-card .btn:hover::before {
+  left: 100%;
+}
+
+.kanban-card .btn-outline-info {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.kanban-card .btn-outline-info:hover {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+}
+
+.kanban-card .btn-outline-primary {
+  border: 1px solid #667eea;
+  color: #667eea;
+}
+
+.kanban-card .btn-outline-primary:hover {
+  background: #667eea;
+  color: white;
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.kanban-card .btn-outline-danger {
+  border: 1px solid #f5576c;
+  color: #f5576c;
+}
+
+.kanban-card .btn-outline-danger:hover {
+  background: #f5576c;
+  color: white;
+  box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+}
+
+/* Modal de ordens */
+.modal-content {
+  background: var(--darker);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-hover);
+  backdrop-filter: blur(20px);
+}
+
+.modal-header {
+  background: var(--primary);
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.modal-body {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.modal-footer {
+  background: rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+/* Serviços dinâmicos */
+.servico-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.servico-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.servico-item .form-control {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border-radius: 8px;
+}
+
+.servico-item .form-control:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+}
+
+/* Animações para ordens */
+@keyframes slideInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.kanban-card {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.kanban-column:nth-child(1) .kanban-card {
+  animation-delay: 0.1s;
+}
+
+.kanban-column:nth-child(2) .kanban-card {
+  animation-delay: 0.2s;
+}
+
+.kanban-column:nth-child(3) .kanban-card {
+  animation-delay: 0.3s;
+}
+
+.kanban-column:nth-child(4) .kanban-card {
+  animation-delay: 0.4s;
+}
+
+/* Responsividade para kanban */
+@media (max-width: 768px) {
+  .kanban-board .row {
+    flex-direction: column;
+  }
+  
+  .kanban-column {
+    margin-bottom: 1rem;
+  }
+  
+  .kanban-content {
+    max-height: 300px;
+    min-height: 200px;
+  }
+  
+  .kanban-card {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Estilos para status específicos */
+.status-aberta {
+  border-left: 4px solid #6c757d;
+}
+
+.status-em-andamento {
+  border-left: 4px solid #ffc107;
+}
+
+.status-aguardando-pecas {
+  border-left: 4px solid #17a2b8;
+}
+
+.status-concluida {
+  border-left: 4px solid #28a745;
+}
+
+.status-cancelada {
+  border-left: 4px solid #dc3545;
+}
+
+/* Indicadores de prioridade */
+.prioridade-baixa::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #28a745;
+  border-radius: 50%;
+}
+
+.prioridade-media::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #ffc107;
+  border-radius: 50%;
+}
+
+.prioridade-alta::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #fd7e14;
+  border-radius: 50%;
+}
+
+.prioridade-urgente::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #dc3545;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Loading spinner para ordens */
+#loadingSpinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(10px);
+}
+
+/* Filtros modernos */
+.filtros-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filtros-container .form-control,
+.filtros-container .form-select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border-radius: 10px;
+}
+
+.filtros-container .form-control:focus,
+.filtros-container .form-select:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+}
+
+.filtros-container .form-control::placeholder {
+  color: var(--text-secondary);
+}
+
+.filtros-container .input-group-text {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border-radius: 10px 0 0 10px;
+}
+
+/* Notificações */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(20px);
+  color: var(--text-primary);
+  animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Melhorias no formulário de ordens */
+.form-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-section h6 {
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.form-section hr {
+  border-color: rgba(255, 255, 255, 0.2);
+  margin: 1rem 0;
+}
+
+/* Tabela de detalhes */
+.table-detalhes {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-detalhes th {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+
+.table-detalhes td {
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.table-detalhes tbody tr:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Melhorias nos botões */
+.btn-modern {
+  background: var(--primary);
+  border: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-modern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.btn-modern:hover::before {
+  left: 100%;
+}
+
+.btn-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Animação de preenchimento automático de campos */
+.campo-preenchido {
+  animation: preenchimentoSucesso 1s ease-in-out;
+  border-color: #28a745 !important;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+}
+
+@keyframes preenchimentoSucesso {
+  0% { 
+    background-color: rgba(40, 167, 69, 0.1);
+    transform: scale(1);
+  }
+  50% { 
+    background-color: rgba(40, 167, 69, 0.2);
+    transform: scale(1.02);
+  }
+  100% { 
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+/* Animação de rotação para loading */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estilo para campos CEP */
+.input-group .form-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(0, 212, 255, 0.25);
+}
+
+.input-group .btn-outline-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+.input-group .btn-outline-secondary:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.input-group .btn-outline-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Feedback de erro personalizado */
+.invalid-feedback {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc3545;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Estilo para campos de endereço */
+.endereco-grupo {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.endereco-grupo:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Tooltip customizado para CEP */
+.cep-tooltip {
+  position: relative;
+}
+
+.cep-tooltip::after {
+  content: "Digite o CEP para buscar automaticamente";
+  position: absolute;
+  bottom: -25px;
+  left: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.cep-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Indicador de campo obrigatório */
+.form-label::after {
+  content: " *";
+  color: #dc3545;
+  display: none;
+}
+
+.form-label[data-required="true"]::after {
+  display: inline;
+}
+
+/* Estilo para campos preenchidos automaticamente */
+.auto-filled {
+  background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
+  animation: autoFillHighlight 2s ease-in-out;
+}
+
+@keyframes autoFillHighlight {
+  0%, 100% { background: transparent; }
+  50% { background: rgba(40, 167, 69, 0.1); }
+}
