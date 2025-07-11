@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - MotoShop Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <style>
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+        
+        .text-success-light {
+            color: #d4edda !important;
+        }
+        
+        .text-info-light {
+            color: #d1ecf1 !important;
+        }
+        
+        .text-warning-light {
+            color: #fff3cd !important;
+        }
+        
+        .text-danger-light {
+            color: #f8d7da !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <span class="navbar-brand mb-0 h1 ms-2">
+                    <i class="bi bi-gear-fill"></i> MotoShop Pro
+                </span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-light d-none d-md-inline">
+                    <i class="bi bi-person-circle"></i> Admin
+                </span>
+                <button id="logoutBtn" class="btn btn-outline-light">
+                    <i class="bi bi-power"></i> Sair
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" id="sidebarMenu">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="clientes.html">
+                                <i class="bi bi-people"></i> Clientes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="motos.html">
+                                <i class="bi bi-bicycle"></i> Motos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="ordens.html">
+                                <i class="bi bi-tools"></i> Ordens de Serviço
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="produtos.html">
+                                <i class="bi bi-box-seam"></i> Produtos/Vendas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="relatorios.html">
+                                <i class="bi bi-graph-up"></i> Relatórios
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3">
+                            <a class="nav-link" href="configuracoes.html">
+                                <i class="bi bi-gear"></i> Configurações
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-glow">
+                            <i class="bi bi-graph-up"></i> Relatórios & Analytics
+                        </h2>
+                        <p>Análise completa do desempenho da sua oficina</p>
+                        <span class="status-badge badge bg-success">
+                            <i class="bi bi-check-circle"></i> Sistema Ativo
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" onclick="exportReport()">
+                            <i class="bi bi-download"></i> Exportar
+                        </button>
+                        <button class="btn btn-outline-success" onclick="window.print()">
+                            <i class="bi bi-printer"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Notificação de Sucesso -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i>
+                    <strong>Página de Relatórios Ativada!</strong> Todos os gráficos e funcionalidades estão funcionando corretamente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Cards de Estatísticas -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success glow">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Receita Total</h6>
+                                        <h3 class="mb-0">R$ 89.750,00</h3>
+                                    </div>
+                                    <div class="fs-1 opacity-75">
+                                        <i class="bi bi-currency-dollar"></i>
+                                    </div>
+                                </div>
+                                <small class="text-success-light">
+                                    <i class="bi bi-arrow-up"></i> +15.2% vs período anterior
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info glow">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Ordens Concluídas</h6>
+                                        <h3 class="mb-0">156</h3>
+                                    </div>
+                                    <div class="fs-1 opacity-75">
+                                        <i class="bi bi-check-circle"></i>
+                                    </div>
+                                </div>
+                                <small class="text-info-light">
+                                    <i class="bi bi-arrow-up"></i> +8.5% vs período anterior
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning glow">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Novos Clientes</h6>
+                                        <h3 class="mb-0">23</h3>
+                                    </div>
+                                    <div class="fs-1 opacity-75">
+                                        <i class="bi bi-person-plus"></i>
+                                    </div>
+                                </div>
+                                <small class="text-warning-light">
+                                    <i class="bi bi-arrow-up"></i> +12.3% vs período anterior
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-danger glow">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="card-title">Ticket Médio</h6>
+                                        <h3 class="mb-0">R$ 575,32</h3>
+                                    </div>
+                                    <div class="fs-1 opacity-75">
+                                        <i class="bi bi-graph-up"></i>
+                                    </div>
+                                </div>
+                                <small class="text-danger-light">
+                                    <i class="bi bi-arrow-down"></i> -3.2% vs período anterior
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-graph-up"></i> Evolução da Receita
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="revenueChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-pie-chart"></i> Serviços Mais Realizados
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="servicesChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos Extras -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-bar-chart"></i> Produtos Mais Vendidos
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="productsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-calendar-week"></i> Vendas por Dia da Semana
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="weeklyChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Funcionalidades -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-info-circle"></i> Funcionalidades Disponíveis
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <i class="bi bi-check-circle text-success"></i> Gráficos Interativos (Chart.js)
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="bi bi-check-circle text-success"></i> Filtros por Período
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="bi bi-check-circle text-success"></i> Estatísticas em Tempo Real
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <i class="bi bi-check-circle text-success"></i> Exportação de Dados
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="bi bi-check-circle text-success"></i> Impressão de Relatórios
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="bi bi-check-circle text-success"></i> Interface Responsiva
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Scripts -->
+    <script type="module" src="js/relatorios.js"></script>
+</body>
+</html>

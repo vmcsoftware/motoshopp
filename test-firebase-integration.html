@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Integração Firebase - MotoShop Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .test-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .test-section {
+            padding: 20px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-success {
+            background: #28a745;
+            color: white;
+        }
+        .status-error {
+            background: #dc3545;
+            color: white;
+        }
+        .status-loading {
+            background: #ffc107;
+            color: black;
+        }
+        .test-result {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-card">
+            <div class="test-header">
+                <h1><i class="fas fa-fire"></i> Teste de Integração Firebase</h1>
+                <p>Verificando conexão e funcionalidades do Firebase</p>
+            </div>
+            
+            <div class="test-section">
+                <h3>Status da Conexão</h3>
+                <div id="connection-status" class="status-badge status-loading">
+                    <i class="fas fa-spinner fa-spin"></i> Testando conexão...
+                </div>
+                <div id="connection-result" class="test-result" style="display: none;"></div>
+            </div>
+            
+            <div class="test-section">
+                <h3>Testes das Collections</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Clientes</h5>
+                        <div id="clientes-status" class="status-badge status-loading">
+                            <i class="fas fa-spinner fa-spin"></i> Testando...
+                        </div>
+                        <div id="clientes-result" class="test-result" style="display: none;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Motos</h5>
+                        <div id="motos-status" class="status-badge status-loading">
+                            <i class="fas fa-spinner fa-spin"></i> Testando...
+                        </div>
+                        <div id="motos-result" class="test-result" style="display: none;"></div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h5>Ordens de Serviço</h5>
+                        <div id="ordens-status" class="status-badge status-loading">
+                            <i class="fas fa-spinner fa-spin"></i> Testando...
+                        </div>
+                        <div id="ordens-result" class="test-result" style="display: none;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Produtos</h5>
+                        <div id="produtos-status" class="status-badge status-loading">
+                            <i class="fas fa-spinner fa-spin"></i> Testando...
+                        </div>
+                        <div id="produtos-result" class="test-result" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="test-section">
+                <h3>Ações de Teste</h3>
+                <button class="test-button" onclick="testFirebaseConnection()">
+                    <i class="fas fa-plug"></i> Testar Conexão
+                </button>
+                <button class="test-button" onclick="testCRUDOperations()">
+                    <i class="fas fa-database"></i> Testar CRUD
+                </button>
+                <button class="test-button" onclick="testRealTimeUpdates()">
+                    <i class="fas fa-sync-alt"></i> Testar Tempo Real
+                </button>
+                <button class="test-button" onclick="clearTestData()">
+                    <i class="fas fa-trash"></i> Limpar Dados de Teste
+                </button>
+            </div>
+            
+            <div class="test-section">
+                <h3>Log de Atividades</h3>
+                <div id="activity-log" class="test-result" style="max-height: 300px; overflow-y: auto;">
+                    <div class="text-muted">Aguardando testes...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            updateDoc, 
+            deleteDoc, 
+            doc,
+            onSnapshot,
+            query,
+            orderBy,
+            limit
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        let db;
+        let app;
+        let collections = {};
+
+        // Função para adicionar log
+        window.addLog = function(message, type = 'info') {
+            const logContainer = document.getElementById('activity-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        };
+
+        // Função para atualizar status
+        window.updateStatus = function(elementId, status, message) {
+            const element = document.getElementById(elementId);
+            const resultElement = document.getElementById(elementId.replace('-status', '-result'));
+            
+            element.className = `status-badge status-${status}`;
+            
+            if (status === 'success') {
+                element.innerHTML = '<i class="fas fa-check"></i> Sucesso';
+            } else if (status === 'error') {
+                element.innerHTML = '<i class="fas fa-times"></i> Erro';
+            } else {
+                element.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando...';
+            }
+            
+            if (message) {
+                resultElement.style.display = 'block';
+                resultElement.textContent = message;
+            }
+        };
+
+        // Inicializar Firebase
+        async function initFirebase() {
+            try {
+                addLog('Iniciando conexão com Firebase...', 'info');
+                
+                // Buscar configuração do Firebase
+                const response = await fetch('./js/firebase-config.js');
+                const configText = await response.text();
+                
+                // Extrair configuração do texto
+                const configMatch = configText.match(/const firebaseConfig = ({[\s\S]*?});/);
+                if (configMatch) {
+                    const firebaseConfig = eval('(' + configMatch[1] + ')');
+                    
+                    // Inicializar Firebase
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    
+                    // Configurar collections
+                    collections = {
+                        clientes: collection(db, 'clientes'),
+                        motos: collection(db, 'motos'),
+                        ordens: collection(db, 'ordens'),
+                        produtos: collection(db, 'produtos')
+                    };
+                    
+                    addLog('Firebase inicializado com sucesso!', 'success');
+                    updateStatus('connection-status', 'success', 'Conexão estabelecida com sucesso');
+                    
+                    // Testar cada collection
+                    await testCollections();
+                    
+                } else {
+                    throw new Error('Configuração do Firebase não encontrada');
+                }
+            } catch (error) {
+                addLog(`Erro ao conectar com Firebase: ${error.message}`, 'error');
+                updateStatus('connection-status', 'error', error.message);
+            }
+        }
+
+        // Testar collections
+        async function testCollections() {
+            const collectionNames = ['clientes', 'motos', 'ordens', 'produtos'];
+            
+            for (const name of collectionNames) {
+                try {
+                    addLog(`Testando collection: ${name}`, 'info');
+                    
+                    // Tentar buscar documentos
+                    const q = query(collections[name], limit(5));
+                    const querySnapshot = await getDocs(q);
+                    
+                    const count = querySnapshot.size;
+                    addLog(`Collection ${name}: ${count} documentos encontrados`, 'success');
+                    updateStatus(`${name}-status`, 'success', `${count} documentos encontrados`);
+                    
+                } catch (error) {
+                    addLog(`Erro ao testar collection ${name}: ${error.message}`, 'error');
+                    updateStatus(`${name}-status`, 'error', error.message);
+                }
+            }
+        }
+
+        // Testar conexão
+        window.testFirebaseConnection = async function() {
+            addLog('Testando conexão manual...', 'info');
+            await initFirebase();
+        };
+
+        // Testar operações CRUD
+        window.testCRUDOperations = async function() {
+            if (!db) {
+                addLog('Firebase não está inicializado', 'error');
+                return;
+            }
+            
+            addLog('Iniciando teste CRUD...', 'info');
+            
+            try {
+                // Criar documento de teste
+                const testData = {
+                    nome: 'Cliente Teste',
+                    email: 'teste@firebase.com',
+                    telefone: '(11) 99999-9999',
+                    endereco: 'Rua Teste, 123',
+                    dataCriacao: new Date().toISOString(),
+                    tipo: 'teste'
+                };
+                
+                addLog('Criando documento de teste...', 'info');
+                const docRef = await addDoc(collections.clientes, testData);
+                addLog(`Documento criado com ID: ${docRef.id}`, 'success');
+                
+                // Ler documento
+                addLog('Lendo documento...', 'info');
+                const docSnap = await getDocs(query(collections.clientes, limit(1)));
+                addLog(`Documento lido com sucesso`, 'success');
+                
+                // Atualizar documento
+                addLog('Atualizando documento...', 'info');
+                await updateDoc(doc(db, 'clientes', docRef.id), {
+                    nome: 'Cliente Teste Atualizado',
+                    dataAtualizacao: new Date().toISOString()
+                });
+                addLog('Documento atualizado com sucesso', 'success');
+                
+                // Deletar documento
+                addLog('Deletando documento de teste...', 'info');
+                await deleteDoc(doc(db, 'clientes', docRef.id));
+                addLog('Documento deletado com sucesso', 'success');
+                
+                addLog('Teste CRUD concluído com sucesso!', 'success');
+                
+            } catch (error) {
+                addLog(`Erro no teste CRUD: ${error.message}`, 'error');
+            }
+        };
+
+        // Testar atualizações em tempo real
+        window.testRealTimeUpdates = async function() {
+            if (!db) {
+                addLog('Firebase não está inicializado', 'error');
+                return;
+            }
+            
+            addLog('Configurando listener em tempo real...', 'info');
+            
+            try {
+                const q = query(collections.clientes, orderBy('nome'), limit(5));
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    addLog(`Atualização em tempo real: ${snapshot.size} documentos`, 'info');
+                    
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === 'added') {
+                            addLog(`Documento adicionado: ${change.doc.id}`, 'success');
+                        }
+                        if (change.type === 'modified') {
+                            addLog(`Documento modificado: ${change.doc.id}`, 'success');
+                        }
+                        if (change.type === 'removed') {
+                            addLog(`Documento removido: ${change.doc.id}`, 'success');
+                        }
+                    });
+                });
+                
+                addLog('Listener configurado com sucesso!', 'success');
+                
+                // Parar listener após 10 segundos
+                setTimeout(() => {
+                    unsubscribe();
+                    addLog('Listener interrompido', 'info');
+                }, 10000);
+                
+            } catch (error) {
+                addLog(`Erro no teste em tempo real: ${error.message}`, 'error');
+            }
+        };
+
+        // Limpar dados de teste
+        window.clearTestData = async function() {
+            if (!db) {
+                addLog('Firebase não está inicializado', 'error');
+                return;
+            }
+            
+            addLog('Limpando dados de teste...', 'info');
+            
+            try {
+                const q = query(collections.clientes, limit(10));
+                const querySnapshot = await getDocs(q);
+                
+                const deletePromises = [];
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    if (data.tipo === 'teste') {
+                        deletePromises.push(deleteDoc(doc(db, 'clientes', docSnap.id)));
+                    }
+                });
+                
+                await Promise.all(deletePromises);
+                addLog(`${deletePromises.length} documentos de teste removidos`, 'success');
+                
+            } catch (error) {
+                addLog(`Erro ao limpar dados: ${error.message}`, 'error');
+            }
+        };
+
+        // Inicializar ao carregar a página
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initFirebase, 1000);
+        });
+    </script>
+</body>
+</html>

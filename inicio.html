@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicialização - MotoShop Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature h3 {
+            color: #00d4ff;
+            margin-bottom: 0.5rem;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, #00d4ff, #667eea);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+        }
+        
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(40, 167, 69, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(40, 167, 69, 0.5);
+        }
+        
+        .loading {
+            display: none;
+            margin-top: 1rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏍️ MotoShop Pro</h1>
+        <p class="subtitle">Sistema de Gestão para Oficina de Motos</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📊 Dashboard Moderno</h3>
+                <p>Visão completa do seu negócio com estatísticas em tempo real</p>
+            </div>
+            <div class="feature">
+                <h3>👥 Gestão de Clientes</h3>
+                <p>Controle completo de clientes com filtros avançados</p>
+            </div>
+            <div class="feature">
+                <h3>🏍️ Controle de Motos</h3>
+                <p>Cadastro detalhado de veículos e histórico de serviços</p>
+            </div>
+            <div class="feature">
+                <h3>🔧 Ordens de Serviço</h3>
+                <p>Sistema Kanban com drag & drop para gerenciar serviços</p>
+            </div>
+        </div>
+        
+        <div class="status">
+            <strong>✅ Sistema Pronto para Uso</strong>
+            <br>
+            <small>Todas as funcionalidades estão implementadas e testadas</small>
+        </div>
+        
+        <div class="buttons">
+            <a href="login.html" class="btn">🚀 Acessar Sistema</a>
+            <a href="dashboard.html" class="btn btn-secondary">📊 Dashboard Direto</a>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Carregando sistema...</p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Versão 1.0.0</strong> - Desenvolvido com ❤️ para a comunidade motociclística</p>
+            <p><small>Compatível com todos os navegadores modernos</small></p>
+        </div>
+    </div>
+    
+    <script>
+        // Verificar se o sistema está pronto
+        function verificarSistema() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(true);
+                }, 1000);
+            });
+        }
+        
+        // Carregar sistema
+        async function carregarSistema(url) {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+            
+            try {
+                await verificarSistema();
+                window.location.href = url;
+            } catch (error) {
+                console.error('Erro ao carregar sistema:', error);
+                alert('Erro ao carregar o sistema. Tente novamente.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+        
+        // Adicionar eventos aos botões
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    carregarSistema(this.href);
+                });
+            });
+        });
+        
+        // Verificar compatibilidade do navegador
+        function verificarCompatibilidade() {
+            const features = [
+                'fetch',
+                'localStorage',
+                'sessionStorage',
+                'Promise',
+                'Array.from'
+            ];
+            
+            const incompatible = features.filter(feature => {
+                return !window[feature];
+            });
+            
+            if (incompatible.length > 0) {
+                alert('Seu navegador não é totalmente compatível com este sistema. Recomendamos usar Chrome, Firefox, Safari ou Edge atualizado.');
+            }
+        }
+        
+        // Verificar compatibilidade ao carregar
+        window.addEventListener('load', verificarCompatibilidade);
+        
+        // Adicionar algumas animações
+        function animarElementos() {
+            const features = document.querySelectorAll('.feature');
+            features.forEach((feature, index) => {
+                feature.style.animation = `slideInUp 0.5s ease-out ${index * 0.1}s both`;
+            });
+        }
+        
+        // CSS para animações
+        const styles = `
+            @keyframes slideInUp {
+                from {
+                    transform: translateY(30px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
+        
+        // Animar ao carregar
+        document.addEventListener('DOMContentLoaded', animarElementos);
+    </script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - MotoShop Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <span class="navbar-brand mb-0 h1 ms-2">
+                    <i class="bi bi-gear-fill"></i> MotoShop Pro
+                </span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-light d-none d-md-inline">
+                    <i class="bi bi-person-circle"></i> Admin
+                </span>
+                <button id="logoutBtn" class="btn btn-outline-light">
+                    <i class="bi bi-power"></i> Sair
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" id="sidebarMenu">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="clientes.html">
+                                <i class="bi bi-people"></i> Clientes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="motos.html">
+                                <i class="bi bi-bicycle"></i> Motos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="ordens.html">
+                                <i class="bi bi-tools"></i> Ordens de Serviço
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="produtos.html">
+                                <i class="bi bi-box-seam"></i> Produtos/Vendas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="relatorios.html">
+                                <i class="bi bi-graph-up"></i> Relatórios
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3">
+                            <a class="nav-link active" href="configuracoes.html">
+                                <i class="bi bi-gear"></i> Configurações
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="text-glow">
+                            <i class="bi bi-gear"></i> Configurações do Sistema
+                        </h2>
+                        <p>Personalize e configure sua experiência no MotoShop Pro</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" id="saveAllBtn">
+                            <i class="bi bi-floppy"></i> Salvar Tudo
+                        </button>
+                        <button class="btn btn-outline-secondary" id="resetBtn">
+                            <i class="bi bi-arrow-clockwise"></i> Resetar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Navegação por Tabs -->
+                <ul class="nav nav-tabs mb-4" id="configTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+                            <i class="bi bi-gear"></i> Geral
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab">
+                            <i class="bi bi-building"></i> Empresa
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">
+                            <i class="bi bi-people"></i> Usuários
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab">
+                            <i class="bi bi-bell"></i> Notificações
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" type="button" role="tab">
+                            <i class="bi bi-cloud-download"></i> Backup
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="configTabsContent">
+                    <!-- Configurações Gerais -->
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-palette"></i> Aparência
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tema</label>
+                                            <select class="form-select" id="themeSelect">
+                                                <option value="dark">Escuro</option>
+                                                <option value="light">Claro</option>
+                                                <option value="auto">Automático</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Cor Primária</label>
+                                            <input type="color" class="form-control form-control-color" id="primaryColor" value="#0d6efd">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Idioma</label>
+                                            <select class="form-select" id="languageSelect">
+                                                <option value="pt-BR">Português (Brasil)</option>
+                                                <option value="en-US">English (US)</option>
+                                                <option value="es-ES">Español</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-sliders"></i> Funcionalidades
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableAnimations" checked>
+                                                <label class="form-check-label" for="enableAnimations">
+                                                    Habilitar Animações
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableNotifications" checked>
+                                                <label class="form-check-label" for="enableNotifications">
+                                                    Notificações Push
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableSounds" checked>
+                                                <label class="form-check-label" for="enableSounds">
+                                                    Sons do Sistema
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="enableAutoSave" checked>
+                                                <label class="form-check-label" for="enableAutoSave">
+                                                    Salvamento Automático
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configurações da Empresa -->
+                    <div class="tab-pane fade" id="company" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-building"></i> Informações da Empresa
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Nome da Empresa</label>
+                                                <input type="text" class="form-control" id="companyName" value="MotoShop Pro">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">CNPJ</label>
+                                                <input type="text" class="form-control" id="companyCnpj" placeholder="00.000.000/0000-00">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Telefone</label>
+                                                <input type="text" class="form-control" id="companyPhone" placeholder="(00) 00000-0000">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="companyEmail" placeholder="contato@motoshop.com">
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Endereço</label>
+                                                <input type="text" class="form-control" id="companyAddress" placeholder="Rua, Número, Bairro">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Cidade</label>
+                                                <input type="text" class="form-control" id="companyCity">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Estado</label>
+                                                <select class="form-select" id="companyState">
+                                                    <option value="">Selecione...</option>
+                                                    <option value="SP">São Paulo</option>
+                                                    <option value="RJ">Rio de Janeiro</option>
+                                                    <option value="MG">Minas Gerais</option>
+                                                    <!-- Adicionar outros estados -->
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">CEP</label>
+                                                <input type="text" class="form-control" id="companyCep" placeholder="00000-000">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-image"></i> Logo da Empresa
+                                        </h5>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <img src="https://via.placeholder.com/150x100/6f42c1/white?text=LOGO" alt="Logo" class="img-fluid rounded" id="companyLogo">
+                                        </div>
+                                        <input type="file" class="form-control" id="logoFile" accept="image/*">
+                                        <small class="form-text text-muted">Formatos: PNG, JPG, SVG (máx. 2MB)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gerenciamento de Usuários -->
+                    <div class="tab-pane fade" id="users" role="tabpanel">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-people"></i> Usuários do Sistema
+                                </h5>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                    <i class="bi bi-plus-circle"></i> Adicionar Usuário
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Email</th>
+                                                <th>Função</th>
+                                                <th>Status</th>
+                                                <th>Último Acesso</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTable">
+                                            <!-- Usuários serão inseridos via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configurações de Notificações -->
+                    <div class="tab-pane fade" id="notifications" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-bell"></i> Notificações por Email
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="emailNewOrder" checked>
+                                                <label class="form-check-label" for="emailNewOrder">
+                                                    Novas Ordens de Serviço
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="emailOrderComplete" checked>
+                                                <label class="form-check-label" for="emailOrderComplete">
+                                                    Ordens Concluídas
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="emailNewClient" checked>
+                                                <label class="form-check-label" for="emailNewClient">
+                                                    Novos Clientes
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="emailLowStock">
+                                                <label class="form-check-label" for="emailLowStock">
+                                                    Estoque Baixo
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-phone"></i> Notificações Push
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pushNewOrder" checked>
+                                                <label class="form-check-label" for="pushNewOrder">
+                                                    Novas Ordens de Serviço
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pushReminders" checked>
+                                                <label class="form-check-label" for="pushReminders">
+                                                    Lembretes de Agendamento
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pushPayments">
+                                                <label class="form-check-label" for="pushPayments">
+                                                    Pagamentos Recebidos
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="pushMarketing">
+                                                <label class="form-check-label" for="pushMarketing">
+                                                    Campanhas de Marketing
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backup e Segurança -->
+                    <div class="tab-pane fade" id="backup" role="tabpanel">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-cloud-download"></i> Backup de Dados
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Backup Automático</label>
+                                            <select class="form-select" id="autoBackup">
+                                                <option value="disabled">Desabilitado</option>
+                                                <option value="daily">Diário</option>
+                                                <option value="weekly" selected>Semanal</option>
+                                                <option value="monthly">Mensal</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Último Backup</label>
+                                            <input type="text" class="form-control" value="15/12/2023 às 02:00" readonly>
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" id="createBackupBtn">
+                                                <i class="bi bi-cloud-download"></i> Criar Backup Agora
+                                            </button>
+                                            <button class="btn btn-outline-secondary" id="downloadBackupBtn">
+                                                <i class="bi bi-download"></i> Baixar Backup
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="bi bi-shield-check"></i> Segurança
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+                                                <label class="form-check-label" for="twoFactorAuth">
+                                                    Autenticação em Duas Etapas
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="sessionTimeout" checked>
+                                                <label class="form-check-label" for="sessionTimeout">
+                                                    Timeout de Sessão (30 min)
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="loginLogs" checked>
+                                                <label class="form-check-label" for="loginLogs">
+                                                    Log de Acessos
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="d-grid">
+                                            <button class="btn btn-warning" id="changePasswordBtn">
+                                                <i class="bi bi-key"></i> Alterar Senha
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal: Adicionar Usuário -->
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-plus"></i> Adicionar Usuário
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="mb-3">
+                            <label class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="userName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="userEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Função</label>
+                            <select class="form-select" id="userRole" required>
+                                <option value="">Selecione...</option>
+                                <option value="admin">Administrador</option>
+                                <option value="manager">Gerente</option>
+                                <option value="mechanic">Mecânico</option>
+                                <option value="receptionist">Recepcionista</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Senha Temporária</label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveUserBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/configuracoes.js"></script>
+</body>
+</html>

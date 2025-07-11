@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Motos - MotoShop Pro</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center">
+        <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <span class="navbar-brand mb-0 h1 ms-2">
+          <i class="bi bi-gear-fill"></i> MotoShop Pro
+        </span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-light d-none d-md-inline">
+          <i class="bi bi-person-circle"></i> Admin
+        </span>
+        <button id="logoutBtn" class="btn btn-outline-light">
+          <i class="bi bi-power"></i> Sair
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" id="sidebarMenu">
+        <div class="position-sticky pt-3">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link" href="dashboard.html" data-section="dashboard">
+                <i class="bi bi-speedometer2"></i> Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="clientes.html" data-section="clientes">
+                <i class="bi bi-people"></i> Clientes
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="motos.html" data-section="motos">
+                <i class="bi bi-bicycle"></i> Motos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-section="ordens">
+                <i class="bi bi-tools"></i> Ordens de Serviço
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-section="produtos">
+                <i class="bi bi-box-seam"></i> Produtos/Vendas
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-section="relatorios">
+                <i class="bi bi-graph-up"></i> Relatórios
+              </a>
+            </li>
+            <li class="nav-item mt-3">
+              <a class="nav-link" href="#" data-section="configuracoes">
+                <i class="bi bi-gear"></i> Configurações
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 mt-4">
+        <!-- Header da página -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="text-glow">
+              <i class="bi bi-bicycle"></i> Gerenciar Motos
+            </h2>
+            <p>Cadastre e gerencie as motocicletas dos seus clientes</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#motoModal">
+              <i class="bi bi-plus-circle"></i> Nova Moto
+            </button>
+            <button class="btn btn-outline-success" id="exportarBtn">
+              <i class="bi bi-download"></i> Exportar
+            </button>
+          </div>
+        </div>
+
+        <!-- Filtros e busca -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <span class="input-group-text">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input type="text" class="form-control" id="buscarMoto" placeholder="Buscar moto...">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <select class="form-select" id="filtroMarca">
+                  <option value="">Todas as Marcas</option>
+                  <option value="Honda">Honda</option>
+                  <option value="Yamaha">Yamaha</option>
+                  <option value="Kawasaki">Kawasaki</option>
+                  <option value="Suzuki">Suzuki</option>
+                  <option value="BMW">BMW</option>
+                  <option value="Harley-Davidson">Harley-Davidson</option>
+                  <option value="Triumph">Triumph</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <select class="form-select" id="filtroStatus">
+                  <option value="">Todos os Status</option>
+                  <option value="ativo">Ativo</option>
+                  <option value="manutencao">Em Manutenção</option>
+                  <option value="vendido">Vendido</option>
+                  <option value="inativo">Inativo</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <select class="form-select" id="filtroAno">
+                  <option value="">Todos os Anos</option>
+                  <option value="2024">2024</option>
+                  <option value="2023">2023</option>
+                  <option value="2022">2022</option>
+                  <option value="2021">2021</option>
+                  <option value="2020">2020</option>
+                  <option value="antigo">Anterior a 2020</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <select class="form-select" id="filtroOrdem">
+                  <option value="modelo">Ordenar por Modelo</option>
+                  <option value="marca">Marca</option>
+                  <option value="ano">Ano</option>
+                  <option value="cliente">Cliente</option>
+                </select>
+              </div>
+              <div class="col-md-1">
+                <button class="btn btn-outline-secondary w-100" id="limparFiltros">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estatísticas rápidas -->
+        <div class="row g-4 mb-4">
+          <div class="col-md-3">
+            <div class="card text-white bg-success glow">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title">Total de Motos</h6>
+                    <h3 class="mb-0" id="totalMotos">0</h3>
+                  </div>
+                  <div class="fs-2 opacity-75">
+                    <i class="bi bi-bicycle"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-white bg-info glow">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title">Em Manutenção</h6>
+                    <h3 class="mb-0" id="motosManutencao">0</h3>
+                  </div>
+                  <div class="fs-2 opacity-75">
+                    <i class="bi bi-wrench"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-white bg-warning glow">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title">Motos Ativas</h6>
+                    <h3 class="mb-0" id="motosAtivas">0</h3>
+                  </div>
+                  <div class="fs-2 opacity-75">
+                    <i class="bi bi-check-circle"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-white bg-secondary glow">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="card-title">Cadastradas Hoje</h6>
+                    <h3 class="mb-0" id="motosHoje">0</h3>
+                  </div>
+                  <div class="fs-2 opacity-75">
+                    <i class="bi bi-calendar-plus"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards de Motos -->
+        <div class="row" id="containerMotos">
+          <!-- Motos serão carregadas dinamicamente -->
+        </div>
+
+        <!-- Paginação -->
+        <div class="d-flex justify-content-between align-items-center mt-4">
+          <div>
+            <small class="text-muted">
+              Mostrando <span id="resultadosInfo">0-0 de 0</span> motos
+            </small>
+          </div>
+          <nav aria-label="Paginação">
+            <ul class="pagination pagination-sm mb-0" id="paginacao">
+              <!-- Paginação será gerada dinamicamente -->
+            </ul>
+          </nav>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal de Moto -->
+  <div class="modal fade" id="motoModal" tabindex="-1" aria-labelledby="motoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="motoModalLabel">
+            <i class="bi bi-bicycle"></i> Nova Moto
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formMoto">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="proprietario" class="form-label">Proprietário *</label>
+                <select class="form-select" id="proprietario" required>
+                  <option value="">Selecione o proprietário</option>
+                  <!-- Clientes serão carregados dinamicamente -->
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="marca" class="form-label">Marca *</label>
+                <select class="form-select" id="marca" required>
+                  <option value="">Selecione a marca</option>
+                  <option value="Honda">Honda</option>
+                  <option value="Yamaha">Yamaha</option>
+                  <option value="Kawasaki">Kawasaki</option>
+                  <option value="Suzuki">Suzuki</option>
+                  <option value="BMW">BMW</option>
+                  <option value="Harley-Davidson">Harley-Davidson</option>
+                  <option value="Triumph">Triumph</option>
+                  <option value="Ducati">Ducati</option>
+                  <option value="KTM">KTM</option>
+                  <option value="Outra">Outra</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="modelo" class="form-label">Modelo *</label>
+                <input type="text" class="form-control" id="modelo" required>
+              </div>
+              <div class="col-md-6">
+                <label for="ano" class="form-label">Ano *</label>
+                <input type="number" class="form-control" id="ano" min="1900" max="2025" required>
+              </div>
+              <div class="col-md-6">
+                <label for="placa" class="form-label">Placa *</label>
+                <input type="text" class="form-control" id="placa" placeholder="ABC-1234" required>
+              </div>
+              <div class="col-md-6">
+                <label for="cor" class="form-label">Cor</label>
+                <input type="text" class="form-control" id="cor">
+              </div>
+              <div class="col-md-6">
+                <label for="cilindrada" class="form-label">Cilindrada (cc)</label>
+                <input type="number" class="form-control" id="cilindrada" min="50" max="2000">
+              </div>
+              <div class="col-md-6">
+                <label for="combustivel" class="form-label">Combustível</label>
+                <select class="form-select" id="combustivel">
+                  <option value="">Selecione</option>
+                  <option value="Gasolina">Gasolina</option>
+                  <option value="Etanol">Etanol</option>
+                  <option value="Flex">Flex</option>
+                  <option value="Elétrica">Elétrica</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="chassi" class="form-label">Chassi</label>
+                <input type="text" class="form-control" id="chassi">
+              </div>
+              <div class="col-md-6">
+                <label for="renavam" class="form-label">RENAVAM</label>
+                <input type="text" class="form-control" id="renavam">
+              </div>
+              <div class="col-md-6">
+                <label for="km" class="form-label">KM Atual</label>
+                <input type="number" class="form-control" id="km" min="0">
+              </div>
+              <div class="col-md-6">
+                <label for="statusMoto" class="form-label">Status</label>
+                <select class="form-select" id="statusMoto">
+                  <option value="ativo">Ativo</option>
+                  <option value="manutencao">Em Manutenção</option>
+                  <option value="vendido">Vendido</option>
+                  <option value="inativo">Inativo</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label for="observacoes" class="form-label">Observações</label>
+                <textarea class="form-control" id="observacoes" rows="3"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="salvarMoto">
+            <i class="bi bi-save"></i> Salvar Moto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Detalhes da Moto -->
+  <div class="modal fade" id="detalhesMotoModal" tabindex="-1" aria-labelledby="detalhesMotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detalhesMotoModalLabel">
+            <i class="bi bi-info-circle"></i> Detalhes da Moto
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="detalhesMotoContent">
+          <!-- Conteúdo será carregado dinamicamente -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação -->
+  <div class="modal fade" id="confirmarModal" tabindex="-1" aria-labelledby="confirmarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmarModalLabel">Confirmar Ação</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="confirmarTexto">
+          Tem certeza que deseja realizar esta ação?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirmarAcao">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner" class="d-none">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Scripts -->
+  <script type="module" src="js/motos.js"></script>
+</body>
+</html>
