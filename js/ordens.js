@@ -1,56 +1,65 @@
-// Configuração do Firebase
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    getDocs, 
-    updateDoc, 
-    deleteDoc, 
-    doc,
-    orderBy,
-    query,
-    onSnapshot
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+/**
+ * Gerenciamento de Ordens de Serviço - MotoShop Pro
+ * Sistema completo para gestão de ordens de serviço
+ */
 
-// Variáveis Firebase
+// Configuração do Firebase embutida
+const firebaseConfig = {
+  apiKey: "demo-api-key",
+  authDomain: "motoshop-pro.firebaseapp.com",
+  projectId: "motoshop-pro",
+  storageBucket: "motoshop-pro.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+
+// Variáveis globais
 let db;
+let auth;
 let ordensCollection;
-
-// Inicializar Firebase
-async function initializeFirebase() {
-    try {
-        // Buscar configuração do Firebase
-        const response = await fetch('./js/firebase-config.js');
-        const configText = await response.text();
-        
-        // Extrair configuração do texto
-        const configMatch = configText.match(/const firebaseConfig = ({[\s\S]*?});/);
-        if (configMatch) {
-            const firebaseConfig = eval('(' + configMatch[1] + ')');
-            
-            // Inicializar Firebase
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            ordensCollection = collection(db, 'ordens');
-            
-            console.log('Firebase inicializado com sucesso para ordens');
-            
-            // Carregar dados do Firebase
-            await carregarOrdensDoFirebase();
-            
-            return true;
-        }
-    } catch (error) {
-        console.error('Erro ao inicializar Firebase:', error);
-        // Usar dados simulados em caso de erro
-        await carregarDadosSimulados();
-        return false;
-    }
-}
+let isFirebaseReady = false;
 
 // Dados simulados de ordens (fallback)
 let ordens = [];
+
+// Inicializar Firebase
+async function initializeFirebase() {
+  try {
+    console.log('🔄 Inicializando Firebase para ordens...');
+    
+    // Verificar se Firebase está disponível
+    if (typeof firebase === 'undefined') {
+      throw new Error('Firebase SDK não carregado');
+    }
+
+    // Inicializar Firebase se ainda não foi inicializado
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    // Obter referências
+    auth = firebase.auth();
+    db = firebase.firestore();
+    
+    console.log('✅ Firebase inicializado com sucesso para ordens');
+    isFirebaseReady = true;
+    
+    // Carregar dados do Firebase
+    await carregarOrdensDoFirebase();
+    
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Erro ao inicializar Firebase:', error);
+    console.log('📦 Usando dados simulados como fallback');
+    
+    // Usar dados simulados em caso de erro
+    await carregarDadosSimulados();
+    isFirebaseReady = false;
+    
+    return false;
+  }
+}
 
 async function carregarDadosSimulados() {
     ordens = [
@@ -115,26 +124,37 @@ async function carregarDadosSimulados() {
 
 // Carregar ordens do Firebase
 async function carregarOrdensDoFirebase() {
-    try {
-        const q = query(ordensCollection, orderBy('dataAbertura', 'desc'));
-        const querySnapshot = await getDocs(q);
-        
-        ordens = [];
-        querySnapshot.forEach((doc) => {
-            ordens.push({
-                id: doc.id,
-                ...doc.data()
-            });
-        });
-        
-        console.log('Ordens carregadas do Firebase:', ordens.length);
-        renderizarOrdens();
-        atualizarEstatisticas();
-    } catch (error) {
-        console.error('Erro ao carregar ordens do Firebase:', error);
-        await carregarDadosSimulados();
+  try {
+    if (!isFirebaseReady || !db) {
+      console.log('⚠️ Firebase não disponível, usando dados simulados');
+      await carregarDadosSimulados();
+      return;
     }
+
+    console.log('🔄 Carregando ordens do Firebase...');
+    
+    const ordensRef = db.collection('ordens');
+    const snapshot = await ordensRef.orderBy('dataAbertura', 'desc').get();
+    
+    ordens = [];
+    snapshot.forEach((doc) => {
+      ordens.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    console.log('✅ Ordens carregadas do Firebase:', ordens.length);
+    renderizarOrdens();
+    atualizarEstatisticas();
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar ordens do Firebase:', error);
+    console.log('📦 Usando dados simulados como fallback');
+    await carregarDadosSimulados();
+  }
 }
+
 // Simulação de clientes e motos (em produção, buscar do Firebase)
 const clientes = [
   { id: 1, nome: 'João Silva', telefone: '(11) 99999-1111' },
@@ -215,7 +235,20 @@ function inicializarEventos() {
   // Logout
   document.getElementById('logoutBtn').addEventListener('click', function() {
     if (confirm('Tem certeza que deseja sair?')) {
-      window.location.href = 'login.html';
+      // Logout do Firebase se disponível
+      if (isFirebaseReady && auth) {
+        auth.signOut().then(() => {
+          console.log('✅ Logout realizado com sucesso');
+          window.location.href = 'login.html';
+        }).catch((error) => {
+          console.error('❌ Erro no logout:', error);
+          window.location.href = 'login.html';
+        });
+      } else {
+        // Logout local
+        console.log('📱 Logout local realizado');
+        window.location.href = 'login.html';
+      }
     }
   });
 }
@@ -1064,3 +1097,45 @@ const styles = `
 const styleSheet = document.createElement('style');
 styleSheet.textContent = styles;
 document.head.appendChild(styleSheet);
+
+// Funcionalidade de logout
+document.getElementById('logoutBtn')?.addEventListener('click', function() {
+  if (confirm('Tem certeza que deseja sair?')) {
+    // Logout do Firebase se disponível
+    if (isFirebaseReady && auth) {
+      auth.signOut().then(() => {
+        console.log('✅ Logout realizado com sucesso');
+        window.location.href = 'login.html';
+      }).catch((error) => {
+        console.error('❌ Erro no logout:', error);
+        window.location.href = 'login.html';
+      });
+    } else {
+      // Logout local
+      console.log('📱 Logout local realizado');
+      window.location.href = 'login.html';
+    }
+  }
+});
+
+// Verificar autenticação
+function verificarAutenticacao() {
+  if (isFirebaseReady && auth) {
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        console.log('⚠️ Usuário não autenticado, redirecionando...');
+        window.location.href = 'login.html';
+      } else {
+        console.log('✅ Usuário autenticado:', user.email);
+        // Atualizar UI com nome do usuário
+        const userSpan = document.querySelector('.text-light span');
+        if (userSpan) {
+          userSpan.innerHTML = `<i class="bi bi-person-circle"></i> ${user.displayName || user.email}`;
+        }
+      }
+    });
+  }
+}
+
+// Inicializar verificação de autenticação
+setTimeout(verificarAutenticacao, 1000);
