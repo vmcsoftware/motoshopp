@@ -1,5 +1,11 @@
-// Firebase Configuration for MotoShop Pro
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+/**
+ * Firebase Configuration for MotoShop Pro
+ * Configuração centralizada do Firebase para o sistema MotoShop Pro
+ * Versão: 1.0.0
+ * Data: 2024-01-02
+ */
+
+// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyB_pg9QDlL-7Il2DFb5uNTEburyPntoIVA",
   authDomain: "motoshopp-779d7.firebaseapp.com",
@@ -11,43 +17,66 @@ const firebaseConfig = {
   measurementId: "G-MQG7PMCHJL"
 };
 
-// Initialize Firebase
+// Variáveis globais do Firebase
 let app;
 let db;
 let auth;
 let analytics;
 
-// Função para inicializar o Firebase
+/**
+ * Inicializa o Firebase com configuração completa
+ */
 function initializeFirebase() {
   try {
     console.log('🔥 Inicializando Firebase...');
     
-    // Initialize Firebase
-    app = firebase.initializeApp(firebaseConfig);
+    // Verifica se o Firebase já foi inicializado
+    if (firebase.apps.length === 0) {
+      // Inicializa o Firebase
+      app = firebase.initializeApp(firebaseConfig);
+      console.log('✅ Firebase App inicializado');
+    } else {
+      app = firebase.app();
+      console.log('ℹ️ Firebase App já estava inicializado');
+    }
     
-    // Initialize Firebase services
+    // Inicializa os serviços do Firebase
     db = firebase.firestore();
     auth = firebase.auth();
     
-    // Initialize Analytics (optional)
-    if (typeof firebase.analytics !== 'undefined') {
-      analytics = firebase.analytics();
-      console.log('📊 Firebase Analytics inicializado');
-    }
-    
-    console.log('✅ Firebase inicializado com sucesso!');
-    
-    // Configurar persistência offline
-    if (db) {
-      db.enablePersistence().catch((err) => {
-        if (err.code == 'failed-precondition') {
-          console.warn('Persistência offline não disponível - múltiplas abas abertas');
-        } else if (err.code == 'unimplemented') {
-          console.warn('Persistência offline não suportada pelo navegador');
+    // Configurar persistência offline do Firestore
+    db.enablePersistence({ synchronizeTabs: true })
+      .then(() => {
+        console.log('✅ Persistência offline habilitada');
+      })
+      .catch((err) => {
+        if (err.code === 'failed-precondition') {
+          console.warn('⚠️ Persistência offline não disponível - múltiplas abas abertas');
+        } else if (err.code === 'unimplemented') {
+          console.warn('⚠️ Persistência offline não suportada pelo navegador');
+        } else {
+          console.error('❌ Erro ao habilitar persistência offline:', err);
         }
       });
+    
+    // Configurar auth
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        console.log('✅ Persistência de autenticação configurada');
+      })
+      .catch((error) => {
+        console.error('❌ Erro ao configurar persistência de autenticação:', error);
+      });
+    
+    // Inicializar Analytics (se necessário)
+    if (typeof gtag !== 'undefined') {
+      analytics = firebase.analytics();
+      console.log('✅ Firebase Analytics inicializado');
     }
     
+    console.log('🎉 Firebase inicializado com sucesso!');
+    
+    // Retorna os serviços inicializados
     return { app, db, auth, analytics };
     
   } catch (error) {
@@ -56,224 +85,148 @@ function initializeFirebase() {
   }
 }
 
-// Exportar para módulos ES6
-export { initializeFirebase, db, auth, app, analytics };
-
-// Função para verificar status da conexão
-function checkFirebaseConnection() {
-  return new Promise((resolve, reject) => {
-    if (!db) {
-      reject(new Error('Firebase não inicializado'));
-      return;
-    }
-    
-    // Teste de conexão com Firestore
-    db.collection('_test').doc('connection').get()
-      .then(() => {
-        console.log('✅ Conexão com Firebase estabelecida');
-        resolve(true);
-      })
-      .catch((error) => {
-        console.warn('⚠️ Erro na conexão com Firebase:', error);
-        resolve(false);
-      });
-  });
+/**
+ * Obtém uma instância do Firestore
+ */
+function getFirestore() {
+  if (!db) {
+    throw new Error('Firebase não foi inicializado. Chame initializeFirebase() primeiro.');
+  }
+  return db;
 }
 
-// Funções utilitárias para operações no Firebase
-const FirebaseUtils = {
-  // Clientes
-  async getClientes() {
-    try {
-      const snapshot = await db.collection('clientes').get();
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error('Erro ao buscar clientes:', error);
-      return [];
+/**
+ * Obtém uma instância do Auth
+ */
+function getAuth() {
+  if (!auth) {
+    throw new Error('Firebase não foi inicializado. Chame initializeFirebase() primeiro.');
+  }
+  return auth;
+}
+
+/**
+ * Obtém uma instância do Analytics
+ */
+function getAnalytics() {
+  if (!analytics) {
+    console.warn('Firebase Analytics não está inicializado');
+    return null;
+  }
+  return analytics;
+}
+
+/**
+ * Verifica se o Firebase está inicializado
+ */
+function isFirebaseInitialized() {
+  return !!(app && db && auth);
+}
+
+/**
+ * Utilitários para operações comuns do Firestore
+ */
+const FirestoreUtils = {
+  
+  /**
+   * Converte timestamp do Firestore para Date
+   */
+  timestampToDate: (timestamp) => {
+    if (!timestamp) return null;
+    if (timestamp.toDate) {
+      return timestamp.toDate();
     }
+    return new Date(timestamp);
   },
   
-  async addCliente(clienteData) {
-    try {
-      const docRef = await db.collection('clientes').add({
-        ...clienteData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log('Cliente adicionado com ID:', docRef.id);
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao adicionar cliente:', error);
-      throw error;
+  /**
+   * Converte Date para timestamp do Firestore
+   */
+  dateToTimestamp: (date) => {
+    if (!date) return null;
+    if (date instanceof Date) {
+      return firebase.firestore.Timestamp.fromDate(date);
     }
+    return firebase.firestore.Timestamp.fromDate(new Date(date));
   },
   
-  async updateCliente(id, clienteData) {
-    try {
-      await db.collection('clientes').doc(id).update({
-        ...clienteData,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log('Cliente atualizado:', id);
-      return true;
-    } catch (error) {
-      console.error('Erro ao atualizar cliente:', error);
-      throw error;
-    }
+  /**
+   * Obtém timestamp atual do servidor
+   */
+  serverTimestamp: () => {
+    return firebase.firestore.FieldValue.serverTimestamp();
   },
   
-  async deleteCliente(id) {
-    try {
-      await db.collection('clientes').doc(id).delete();
-      console.log('Cliente deletado:', id);
-      return true;
-    } catch (error) {
-      console.error('Erro ao deletar cliente:', error);
-      throw error;
-    }
-  },
-  
-  // Motos
-  async getMotos() {
-    try {
-      const snapshot = await db.collection('motos').get();
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error('Erro ao buscar motos:', error);
-      return [];
-    }
-  },
-  
-  async addMoto(motoData) {
-    try {
-      const docRef = await db.collection('motos').add({
-        ...motoData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log('Moto adicionada com ID:', docRef.id);
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao adicionar moto:', error);
-      throw error;
-    }
-  },
-  
-  // Ordens de Serviço
-  async getOrdens() {
-    try {
-      const snapshot = await db.collection('ordens').get();
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error('Erro ao buscar ordens:', error);
-      return [];
-    }
-  },
-  
-  async addOrdem(ordemData) {
-    try {
-      const docRef = await db.collection('ordens').add({
-        ...ordemData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log('Ordem adicionada com ID:', docRef.id);
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao adicionar ordem:', error);
-      throw error;
-    }
-  },
-  
-  // Produtos
-  async getProdutos() {
-    try {
-      const snapshot = await db.collection('produtos').get();
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error('Erro ao buscar produtos:', error);
-      return [];
-    }
-  },
-  
-  async addProduto(produtoData) {
-    try {
-      const docRef = await db.collection('produtos').add({
-        ...produtoData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log('Produto adicionado com ID:', docRef.id);
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao adicionar produto:', error);
-      throw error;
-    }
-  },
-  
-  // Relatórios
-  async getRelatorios() {
-    try {
-      const snapshot = await db.collection('relatorios').get();
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error('Erro ao buscar relatórios:', error);
-      return [];
-    }
-  },
-  
-  async salvarRelatorio(relatorioData) {
-    try {
-      const docRef = await db.collection('relatorios').add({
-        ...relatorioData,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      console.log('Relatório salvo com ID:', docRef.id);
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao salvar relatório:', error);
-      throw error;
-    }
-  },
-  
-  // Autenticação
-  async signIn(email, password) {
-    try {
-      const userCredential = await auth.signInWithEmailAndPassword(email, password);
-      console.log('Usuário logado:', userCredential.user.uid);
-      return userCredential.user;
-    } catch (error) {
-      console.error('Erro no login:', error);
-      throw error;
-    }
-  },
-  
-  async signOut() {
-    try {
-      await auth.signOut();
-      console.log('Usuário deslogado');
-      return true;
-    } catch (error) {
-      console.error('Erro no logout:', error);
-      throw error;
-    }
-  },
-  
-  // Verificar usuário atual
-  getCurrentUser() {
-    return auth.currentUser;
-  },
-  
-  // Listener para mudanças no estado de autenticação
-  onAuthStateChanged(callback) {
-    return auth.onAuthStateChanged(callback);
+  /**
+   * Gera um ID único para documentos
+   */
+  generateId: () => {
+    return firebase.firestore().collection('temp').doc().id;
   }
 };
 
-// Exportar para uso global
-window.FirebaseUtils = FirebaseUtils;
+/**
+ * Utilitários para autenticação
+ */
+const AuthUtils = {
+  
+  /**
+   * Verifica se o usuário está logado
+   */
+  isLoggedIn: () => {
+    return auth && auth.currentUser !== null;
+  },
+  
+  /**
+   * Obtém o usuário atual
+   */
+  getCurrentUser: () => {
+    return auth ? auth.currentUser : null;
+  },
+  
+  /**
+   * Obtém o UID do usuário atual
+   */
+  getCurrentUserId: () => {
+    const user = AuthUtils.getCurrentUser();
+    return user ? user.uid : null;
+  },
+  
+  /**
+   * Observa mudanças no estado de autenticação
+   */
+  onAuthStateChanged: (callback) => {
+    if (auth) {
+      return auth.onAuthStateChanged(callback);
+    }
+    return null;
+  }
+};
+
+/**
+ * Configuração de desenvolvimento/produção
+ */
+const CONFIG = {
+  isDevelopment: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1',
+  enableDebug: true,
+  enableAnalytics: true,
+  enablePersistence: true
+};
+
+// Log de configuração
+console.log('🔧 Configuração do Firebase carregada:', {
+  projectId: firebaseConfig.projectId,
+  isDevelopment: CONFIG.isDevelopment,
+  enableDebug: CONFIG.enableDebug
+});
+
+// Disponibilizar globalmente
 window.firebaseConfig = firebaseConfig;
 window.initializeFirebase = initializeFirebase;
-window.checkFirebaseConnection = checkFirebaseConnection;
-
-console.log('🔥 Firebase configuration loaded');
+window.getFirestore = getFirestore;
+window.getAuth = getAuth;
+window.getAnalytics = getAnalytics;
+window.isFirebaseInitialized = isFirebaseInitialized;
+window.FirestoreUtils = FirestoreUtils;
+window.AuthUtils = AuthUtils;
+window.CONFIG = CONFIG;
