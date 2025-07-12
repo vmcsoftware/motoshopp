@@ -1098,176 +1098,70 @@ textarea.form-control {
   border-radius: 8px 0 0 8px;
 }
 
-/* Cards de estatísticas específicos para motos */
-.card.glow h6 {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
-  opacity: 0.9;
-}
-
-.card.glow h3 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Animações específicas para cards de moto */
-.moto-card.fade-in {
-  opacity: 0;
-  animation: motoCardFadeIn 0.6s ease forwards;
-}
-
-@keyframes motoCardFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Estado vazio */
-.card-body.text-center.py-5 {
-  padding: 60px 20px !important;
-}
-
-.card-body.text-center.py-5 .bi-bicycle {
-  opacity: 0.3;
+/* Cards de estatísticas fixos */
+.stats-cards-container {
+  position: sticky;
+  top: 80px; /* Altura da navbar + margem */
+  z-index: 999;
+  background: var(--dark);
+  padding: 10px 0;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
   margin-bottom: 20px;
 }
 
-/* Estilos para validação de formulário */
-.form-control:invalid {
-  border-color: #dc3545;
-}
-
-.form-control:valid {
-  border-color: #28a745;
-}
-
-.invalid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #dc3545;
-}
-
-.valid-feedback {
-  display: block;
-  width: 100%;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #28a745;
-}
-
-/* Melhorias para responsividade */
-@media (max-width: 576px) {
-  .moto-card .card-header {
-    padding: 12px 15px;
-  }
-  
-  .moto-card .card-body {
-    padding: 15px;
-  }
-  
-  .moto-card .btn-sm {
-    padding: 6px 10px;
-    font-size: 0.75rem;
-  }
-  
-  .moto-icon {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .badge {
-    font-size: 0.65rem;
-    padding: 4px 8px;
-  }
-}
-
-/* Hover effects para interatividade */
-.moto-card .card-header:hover .moto-icon {
-  transform: scale(1.1);
-  transition: transform 0.3s ease;
-}
-
-.moto-card:hover .badge {
-  transform: scale(1.05);
-  transition: transform 0.3s ease;
-}
-
-/* Estilos para campos de entrada específicos */
-#placa {
-  text-transform: uppercase;
-  font-family: 'Courier New', monospace;
-  font-weight: bold;
-}
-
-#chassi, #renavam {
-  text-transform: uppercase;
-  font-family: 'Courier New', monospace;
-}
-
-/* Loading state para cards */
-.moto-card.loading {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.moto-card.loading::after {
+.stats-cards-container::before {
   content: '';
   position: absolute;
-  top: 0;
+  top: -10px;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--border-radius);
+  height: 10px;
+  background: linear-gradient(to bottom, var(--dark), transparent);
 }
 
-/* Estilos para exportação */
-#exportarBtn {
-  position: relative;
-  overflow: hidden;
-}
-
-#exportarBtn::after {
+.stats-cards-container::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: linear-gradient(to top, var(--dark), transparent);
 }
 
-#exportarBtn:hover::after {
-  width: 300px;
-  height: 300px;
+/* Cards de estatísticas com efeito flutuante */
+.stats-cards-container .card {
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
-/* Melhorias visuais para o grid */
-.row.g-4 {
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
+.stats-cards-container .card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-hover);
 }
 
-.row.g-4 > * {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+/* Garantir que os cards de estatísticas ficam sempre visíveis */
+@media (max-width: 768px) {
+  .stats-cards-container {
+    position: relative;
+    top: auto;
+    z-index: auto;
+  }
+}
+
+/* Container principal com scroll ajustado */
+main {
+  padding-top: 0;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+
+/* Tabela com scroll independente */
+.table-container {
+  max-height: calc(100vh - 400px);
+  overflow-y: auto;
+  position: relative;
 }
 
 /* Estilos para campos obrigatórios no modal */
