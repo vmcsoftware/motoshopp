@@ -105,6 +105,202 @@
   
   <!-- Scripts -->
   <script src="js/auth.js"></script>
-  <script src="js/usuarios-demo.js"></script>
+  
+  <!-- Usuarios Demo Script (inline para evitar problemas de carregamento) -->
+  <script>
+    // Usuários demo pré-configurados
+    const usuariosDemo = [
+      {
+        email: 'admin@motoshop.com',
+        senha: 'admin123',
+        nome: 'Administrador',
+        tipo: 'admin',
+        ativo: true
+      },
+      {
+        email: 'gerente@motoshop.com',
+        senha: 'gerente123',
+        nome: 'Gerente',
+        tipo: 'gerente',
+        ativo: true
+      },
+      {
+        email: 'atendente@motoshop.com',
+        senha: 'atendente123',
+        nome: 'Atendente',
+        tipo: 'atendente',
+        ativo: true
+      }
+    ];
+
+    // Função para auto-preenchimento rápido
+    function preencherDemo(tipo = 'admin') {
+      const usuario = usuariosDemo.find(u => u.tipo === tipo);
+      if (usuario) {
+        document.getElementById('email').value = usuario.email;
+        document.getElementById('password').value = usuario.senha;
+        document.getElementById('rememberMe').checked = true;
+        
+        // Adicionar efeito visual
+        const emailField = document.getElementById('email');
+        const passwordField = document.getElementById('password');
+        emailField.classList.add('border-success');
+        passwordField.classList.add('border-success');
+        
+        setTimeout(() => {
+          emailField.classList.remove('border-success');
+          passwordField.classList.remove('border-success');
+        }, 2000);
+      }
+    }
+
+    // Mostrar informações de login demo
+    function mostrarCredenciaisDemo() {
+      const demoInfo = `
+        <div class="alert alert-info mt-3 fade-in">
+          <h6><i class="bi bi-info-circle"></i> Contas Demo Disponíveis:</h6>
+          <ul class="mb-0">
+            <li><strong>Admin:</strong> admin@motoshop.com / admin123</li>
+            <li><strong>Gerente:</strong> gerente@motoshop.com / gerente123</li>
+            <li><strong>Atendente:</strong> atendente@motoshop.com / atendente123</li>
+          </ul>
+          <small class="text-muted">💡 Use os botões acima para preenchimento automático</small>
+        </div>
+      `;
+
+      const errorDiv = document.getElementById('error');
+      if (errorDiv) {
+        errorDiv.innerHTML = demoInfo;
+        errorDiv.className = 'mt-2';
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    // Adicionar botões de preenchimento rápido
+    function adicionarBotoesPreenchimento() {
+      const form = document.getElementById('loginForm');
+      if (form) {
+        const quickFillDiv = document.createElement('div');
+        quickFillDiv.className = 'row g-2 mb-3';
+        quickFillDiv.innerHTML = `
+          <div class="col-12 mb-2">
+            <small class="text-muted">🚀 Acesso Rápido:</small>
+          </div>
+          <div class="col-4">
+            <button type="button" class="btn btn-sm btn-outline-primary w-100" onclick="preencherDemo('admin')" title="Preencher dados do administrador">
+              <i class="bi bi-shield-check"></i> Admin
+            </button>
+          </div>
+          <div class="col-4">
+            <button type="button" class="btn btn-sm btn-outline-secondary w-100" onclick="preencherDemo('gerente')" title="Preencher dados do gerente">
+              <i class="bi bi-person-gear"></i> Gerente
+            </button>
+          </div>
+          <div class="col-4">
+            <button type="button" class="btn btn-sm btn-outline-success w-100" onclick="preencherDemo('atendente')" title="Preencher dados do atendente">
+              <i class="bi bi-person-workspace"></i> Atendente
+            </button>
+          </div>
+        `;
+
+        // Inserir antes do botão de login
+        const submitBtn = form.querySelector('button[type="submit"]');
+        form.insertBefore(quickFillDiv, submitBtn);
+      }
+    }
+
+    // Adicionar botão para mostrar credenciais demo
+    function adicionarBotaoDemo() {
+      const card = document.querySelector('.card-body');
+      if (card) {
+        const demoBtn = document.createElement('div');
+        demoBtn.className = 'text-center mt-3';
+        demoBtn.innerHTML = `
+          <button type="button" class="btn btn-sm btn-outline-info" onclick="mostrarCredenciaisDemo()" title="Mostrar todas as credenciais disponíveis">
+            <i class="bi bi-question-circle"></i> Ver Todas as Contas
+          </button>
+        `;
+        card.appendChild(demoBtn);
+      }
+    }
+
+    // Reset de senha (simulado)
+    function resetarSenha() {
+      const email = document.getElementById('email').value.trim();
+      
+      if (!email) {
+        document.getElementById('error').innerHTML = `
+          <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i> Digite seu email para recuperar a senha
+          </div>
+        `;
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
+
+      // Simular envio de email
+      document.getElementById('error').innerHTML = `
+        <div class="alert alert-success">
+          <i class="bi bi-check-circle"></i> Email de recuperação enviado para ${email}! 
+          <br><small>Verifique sua caixa de entrada.</small>
+        </div>
+      `;
+      document.getElementById('error').style.display = 'block';
+      
+      setTimeout(() => {
+        document.getElementById('error').innerHTML = '';
+        document.getElementById('error').style.display = 'none';
+      }, 5000);
+    }
+
+    // Configurar link de recuperação de senha
+    function configurarRecuperacaoSenha() {
+      const linkRecuperacao = document.querySelector('a[href="#"]');
+      if (linkRecuperacao && linkRecuperacao.textContent.includes('Esqueceu')) {
+        linkRecuperacao.onclick = (e) => {
+          e.preventDefault();
+          resetarSenha();
+        };
+      }
+    }
+
+    // Inicializar funcionalidades demo quando a página carregar
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        if (window.location.pathname.includes('login.html') || window.location.pathname.endsWith('/login.html') || window.location.pathname === '/') {
+          adicionarBotoesPreenchimento();
+          adicionarBotaoDemo();
+          configurarRecuperacaoSenha();
+          
+          console.log('🎯 Sistema de usuários demo carregado!');
+          console.log('📝 Contas disponíveis:', usuariosDemo.map(u => `${u.email} / ${u.senha}`));
+        }
+      }, 500);
+    });
+
+    // Disponibilizar funções globalmente
+    window.preencherDemo = preencherDemo;
+    window.mostrarCredenciaisDemo = mostrarCredenciaisDemo;
+    window.resetarSenha = resetarSenha;
+    window.usuariosDemo = usuariosDemo;
+  </script>
+  
+  <!-- CSS adicional para animações -->
+  <style>
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .border-success {
+      border-color: #198754 !important;
+      box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+      transition: all 0.3s ease;
+    }
+  </style>
 </body>
 </html>
