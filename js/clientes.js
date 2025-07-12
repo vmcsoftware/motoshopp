@@ -1,37 +1,93 @@
 // Aguardar inicialização do Firebase
 let db, auth;
 
-// Função para aguardar inicialização do Firebase
-function waitForFirebaseInit() {
-  return new Promise((resolve) => {
-    if (window.isFirebaseInitialized && window.isFirebaseInitialized()) {
-      db = window.getFirestore();
-      auth = window.getAuth();
-      resolve();
-    } else {
-      setTimeout(() => waitForFirebaseInit().then(resolve), 100);
+// Configuração Firebase (fallback se não houver arquivo de config)
+const firebaseConfig = {
+  apiKey: "AIzaSyB_pg9QDlL-7Il2DFb5uNTEburyPntoIVA",
+  authDomain: "motoshopp-779d7.firebaseapp.com",
+  databaseURL: "https://motoshopp-779d7-default-rtdb.firebaseio.com",
+  projectId: "motoshopp-779d7",
+  storageBucket: "motoshopp-779d7.firebasestorage.app",
+  messagingSenderId: "806457181928",
+  appId: "1:806457181928:web:205645f2b35f76770d6b5d",
+  measurementId: "G-MQG7PMCHJL"
+};
+
+// Função para inicializar Firebase
+function initializeFirebaseLocal() {
+  try {
+    console.log('🔥 Inicializando Firebase...');
+    
+    // Verificar se o Firebase já foi inicializado
+    if (firebase.apps.length === 0) {
+      // Inicializa o Firebase
+      firebase.initializeApp(firebaseConfig);
+      console.log('✅ Firebase App inicializado');
     }
-  });
+    
+    // Inicializa os serviços do Firebase
+    db = firebase.firestore();
+    auth = firebase.auth();
+    
+    // Configurar persistência offline do Firestore
+    db.enablePersistence({ synchronizeTabs: true })
+      .then(() => {
+        console.log('✅ Persistência offline habilitada');
+      })
+      .catch((err) => {
+        if (err.code === 'failed-precondition') {
+          console.warn('⚠️ Persistência offline não disponível - múltiplas abas abertas');
+        } else if (err.code === 'unimplemented') {
+          console.warn('⚠️ Persistência offline não suportada pelo navegador');
+        } else {
+          console.error('❌ Erro ao habilitar persistência offline:', err);
+        }
+      });
+    
+    console.log('🎉 Firebase inicializado com sucesso!');
+    return { db, auth };
+    
+  } catch (error) {
+    console.error('❌ Erro ao inicializar Firebase:', error);
+    throw error;
+  }
 }
 
 // Inicializar Firebase quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
-  if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
-    // Inicializar Firebase usando a configuração centralizada
-    const firebaseServices = initializeFirebase();
-    db = firebaseServices.db;
-    auth = firebaseServices.auth;
-    
-    // Inicializar a página após Firebase estar pronto
-    setTimeout(() => {
-      inicializarPagina();
-    }, 500);
-  } else {
-    // Firebase já foi inicializado
-    waitForFirebaseInit().then(() => {
-      inicializarPagina();
-    });
-  }
+  console.log('📄 DOM carregado, inicializando Firebase...');
+  
+  // Aguardar um pouco para garantir que todos os scripts foram carregados
+  setTimeout(() => {
+    try {
+      // Tentar usar a configuração centralizada primeiro
+      if (typeof window.initializeFirebase === 'function') {
+        console.log('🔧 Usando configuração centralizada do Firebase');
+        const firebaseServices = window.initializeFirebase();
+        db = firebaseServices.db;
+        auth = firebaseServices.auth;
+      } else {
+        console.log('🔧 Usando configuração local do Firebase');
+        const firebaseServices = initializeFirebaseLocal();
+        db = firebaseServices.db;
+        auth = firebaseServices.auth;
+      }
+      
+      // Inicializar a página após Firebase estar pronto
+      setTimeout(() => {
+        inicializarPagina();
+      }, 500);
+      
+    } catch (error) {
+      console.error('❌ Erro ao inicializar Firebase:', error);
+      console.log('🔄 Tentando inicializar em modo demo...');
+      
+      // Em caso de erro, continuar em modo demo
+      setTimeout(() => {
+        inicializarPagina();
+      }, 1000);
+    }
+  }, 100);
 });
 
 // Variáveis globais
@@ -82,9 +138,19 @@ function configurarEventos() {
   // Logout
   document.getElementById('logoutBtn').addEventListener('click', () => {
     if (confirm('Tem certeza que deseja sair?')) {
-      auth.signOut().then(() => {
+      if (auth && typeof auth.signOut === 'function') {
+        auth.signOut().then(() => {
+          window.location.href = 'login.html';
+        }).catch((error) => {
+          console.error('Erro no logout:', error);
+          // Mesmo com erro, redirecionar para login
+          window.location.href = 'login.html';
+        });
+      } else {
+        // Se não há auth disponível, apenas redirecionar
+        console.log('Auth não disponível, redirecionando...');
         window.location.href = 'login.html';
-      });
+      }
     }
   });
 
@@ -180,8 +246,8 @@ async function carregarClientes() {
     console.log('🔄 Carregando clientes...');
     
     // Verificar se o Firebase está disponível
-    if (!db) {
-      console.warn('⚠️ Firebase não disponível - usando dados simulados');
+    if (!db || typeof db.collection !== 'function') {
+      console.warn('⚠️ Firebase Firestore não disponível - usando dados simulados');
       carregarDadosSimulados();
       return;
     }
@@ -195,13 +261,13 @@ async function carregarClientes() {
       clientes.push({
         id: doc.id,
         ...clienteData,
-        // Converter timestamps do Firebase para Date usando utilitário
-        dataCadastro: window.FirestoreUtils ? 
-          window.FirestoreUtils.timestampToDate(clienteData.dataCadastro) : 
-          (clienteData.dataCadastro ? clienteData.dataCadastro.toDate() : new Date()),
-        ultimaVisita: window.FirestoreUtils ? 
-          window.FirestoreUtils.timestampToDate(clienteData.ultimaVisita) : 
-          (clienteData.ultimaVisita ? clienteData.ultimaVisita.toDate() : null)
+        // Converter timestamps do Firebase para Date
+        dataCadastro: clienteData.dataCadastro && clienteData.dataCadastro.toDate ? 
+          clienteData.dataCadastro.toDate() : 
+          (clienteData.dataCadastro ? new Date(clienteData.dataCadastro) : new Date()),
+        ultimaVisita: clienteData.ultimaVisita && clienteData.ultimaVisita.toDate ? 
+          clienteData.ultimaVisita.toDate() : 
+          (clienteData.ultimaVisita ? new Date(clienteData.ultimaVisita) : null)
       });
     });
     
@@ -219,7 +285,7 @@ async function carregarClientes() {
     
   } catch (error) {
     console.error('❌ Erro ao carregar clientes:', error);
-    mostrarNotificacao('Erro ao carregar clientes do banco de dados', 'danger');
+    mostrarNotificacao('Usando dados locais - conexão com banco indisponível', 'warning');
     
     // Fallback para dados simulados em caso de erro
     console.log('🔄 Usando dados simulados como fallback...');
@@ -606,7 +672,7 @@ async function salvarCliente() {
 
   try {
     // Verificar se o Firebase está disponível
-    if (!db) {
+    if (!db || typeof db.collection !== 'function') {
       console.warn('⚠️ Firebase não disponível - simulando salvamento');
       simularSalvamento(dadosCliente);
       return;
@@ -616,9 +682,7 @@ async function salvarCliente() {
       // Editar cliente existente
       console.log('🔄 Atualizando cliente no Firebase...');
       
-      dadosCliente.ultimaVisita = window.FirestoreUtils ? 
-        window.FirestoreUtils.serverTimestamp() : 
-        firebase.firestore.Timestamp.fromDate(new Date());
+      dadosCliente.ultimaVisita = firebase.firestore.Timestamp.fromDate(new Date());
       
       await db.collection('clientes').doc(clienteEditando.id).update(dadosCliente);
       
@@ -629,9 +693,7 @@ async function salvarCliente() {
       // Novo cliente
       console.log('🔄 Adicionando novo cliente no Firebase...');
       
-      dadosCliente.dataCadastro = window.FirestoreUtils ? 
-        window.FirestoreUtils.serverTimestamp() : 
-        firebase.firestore.Timestamp.fromDate(new Date());
+      dadosCliente.dataCadastro = firebase.firestore.Timestamp.fromDate(new Date());
       dadosCliente.ultimaVisita = null;
       
       await db.collection('clientes').add(dadosCliente);
@@ -649,7 +711,10 @@ async function salvarCliente() {
     
   } catch (error) {
     console.error('❌ Erro ao salvar cliente:', error);
-    mostrarNotificacao('Erro ao salvar cliente no banco de dados', 'danger');
+    mostrarNotificacao('Erro ao salvar cliente - tentando localmente', 'warning');
+    
+    // Fallback para salvamento local
+    simularSalvamento(dadosCliente);
   } finally {
     mostrarLoading(false);
   }
@@ -758,6 +823,13 @@ async function excluirCliente(id) {
     mostrarLoading(true);
     
     try {
+      // Verificar se o Firebase está disponível
+      if (!db) {
+        console.warn('⚠️ Firebase não disponível - simulando exclusão');
+        simularExclusao(id);
+        return;
+      }
+      
       console.log('🔄 Excluindo cliente do Firebase...');
       
       await db.collection('clientes').doc(id).delete();
