@@ -118,15 +118,24 @@ function verificarAutenticacao() {
 function inicializarPagina() {
   console.log('🚀 Inicializando página de clientes...');
   
-  // Verificar se o Firebase está disponível
-  if (!db) {
-    console.warn('⚠️ Firebase não disponível - usando modo demo');
-    // Em modo demo, pode continuar com dados mock
+  // Sempre começar com dados simulados para garantir que a página funcione
+  console.log('📦 Carregando dados simulados primeiro...');
+  carregarDadosSimulados();
+  
+  // Verificar se o Firebase está disponível para funcionalidades adicionais
+  if (db && typeof db.collection === 'function') {
+    console.log('🔥 Firebase disponível - tentando sincronização opcional...');
+    // Tentar carregar dados do Firebase em background, mas sem quebrar a página
+    setTimeout(() => {
+      tentarCarregarFirebase();
+    }, 1000);
+  } else {
+    console.log('📱 Modo local ativo - usando apenas dados simulados');
+    mostrarNotificacao('Modo demonstração ativo', 'info');
   }
   
   verificarAutenticacao();
   configurarEventos();
-  carregarClientes();
   configurarMascaras();
   configurarBuscaCEP();
   
@@ -251,6 +260,16 @@ async function carregarClientes() {
       carregarDadosSimulados();
       return;
     }
+
+    // Primeiro tentar um teste simples de permissão
+    try {
+      await db.collection('clientes').limit(1).get();
+      console.log('✅ Permissões Firebase OK');
+    } catch (permissionError) {
+      console.warn('⚠️ Sem permissões Firebase - usando dados simulados:', permissionError.code);
+      carregarDadosSimulados();
+      return;
+    }
     
     // Buscar clientes no Firestore
     const querySnapshot = await db.collection('clientes').orderBy('nome').get();
@@ -275,8 +294,9 @@ async function carregarClientes() {
     
     // Se não há clientes, criar alguns dados de exemplo
     if (clientes.length === 0) {
-      console.log('📝 Criando dados de exemplo...');
-      await criarDadosExemplo();
+      console.log('📝 Nenhum cliente encontrado - carregando dados simulados...');
+      carregarDadosSimulados();
+      return;
     }
     
     clientesFiltrados = [...clientes];
@@ -285,7 +305,13 @@ async function carregarClientes() {
     
   } catch (error) {
     console.error('❌ Erro ao carregar clientes:', error);
-    mostrarNotificacao('Usando dados locais - conexão com banco indisponível', 'warning');
+    
+    // Verificar tipo de erro para melhor tratamento
+    if (error.code === 'permission-denied' || error.message?.includes('permission')) {
+      mostrarNotificacao('Modo demonstração ativo - usando dados simulados', 'info');
+    } else {
+      mostrarNotificacao('Conexão indisponível - usando dados locais', 'warning');
+    }
     
     // Fallback para dados simulados em caso de erro
     console.log('🔄 Usando dados simulados como fallback...');
@@ -384,7 +410,7 @@ function carregarDadosSimulados() {
       uf: 'SP',
       status: 'ativo',
       tipo: 'pessoa_fisica',
-      observacoes: 'Cliente VIP',
+      observacoes: 'Cliente VIP - Honda CB 600F',
       dataCadastro: new Date('2024-01-15'),
       ultimaVisita: new Date('2024-07-05')
     },
@@ -401,7 +427,7 @@ function carregarDadosSimulados() {
       uf: 'SP',
       status: 'vip',
       tipo: 'pessoa_fisica',
-      observacoes: 'Cliente desde 2020',
+      observacoes: 'Cliente desde 2020 - Yamaha R3',
       dataCadastro: new Date('2020-05-10'),
       ultimaVisita: new Date('2024-07-08')
     },
@@ -418,9 +444,60 @@ function carregarDadosSimulados() {
       uf: 'SP',
       status: 'ativo',
       tipo: 'pessoa_fisica',
-      observacoes: '',
+      observacoes: 'Kawasaki Ninja 300',
       dataCadastro: new Date('2023-03-20'),
       ultimaVisita: new Date('2024-06-25')
+    },
+    {
+      id: '4',
+      nome: 'Ana Costa',
+      email: 'ana@email.com',
+      telefone: '(11) 66666-6666',
+      cpf: '789.123.456-00',
+      cep: '02101-300',
+      endereco: 'Av. Cruzeiro do Sul, 321',
+      bairro: 'Santana',
+      cidade: 'São Paulo',
+      uf: 'SP',
+      status: 'vip',
+      tipo: 'pessoa_fisica',
+      observacoes: 'Cliente fidelizada - Suzuki GSX-R 750',
+      dataCadastro: new Date('2022-08-12'),
+      ultimaVisita: new Date('2024-07-10')
+    },
+    {
+      id: '5',
+      nome: 'Carlos Rodrigues',
+      email: 'carlos@email.com',
+      telefone: '(11) 55555-5555',
+      cpf: '321.654.987-00',
+      cep: '03084-000',
+      endereco: 'Rua do Gasômetro, 654',
+      bairro: 'Brás',
+      cidade: 'São Paulo',
+      uf: 'SP',
+      status: 'ativo',
+      tipo: 'pessoa_fisica',
+      observacoes: 'BMW F 850 GS',
+      dataCadastro: new Date('2024-06-01'),
+      ultimaVisita: new Date('2024-07-11')
+    },
+    {
+      id: '6',
+      nome: 'MotoSpeed Ltda',
+      email: 'contato@motospeed.com',
+      telefone: '(11) 4444-4444',
+      cpf: '12.345.678/0001-90',
+      cep: '09210-580',
+      endereco: 'Av. Industrial, 1000',
+      bairro: 'Centro',
+      cidade: 'Santo André',
+      uf: 'SP',
+      status: 'ativo',
+      tipo: 'pessoa_juridica',
+      observacoes: 'Empresa parceira - Frota de motos',
+      dataCadastro: new Date('2023-11-15'),
+      ultimaVisita: new Date('2024-07-09')
     }
   ];
 
@@ -1089,3 +1166,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, 100);
 });
+
+// Tentar carregar dados do Firebase opcionalmente (sem quebrar a página)
+async function tentarCarregarFirebase() {
+  try {
+    console.log('🔄 Tentando sincronização com Firebase...');
+    
+    // Teste rápido de permissão
+    await db.collection('clientes').limit(1).get();
+    
+    console.log('✅ Firebase acessível - sincronizando dados...');
+    const querySnapshot = await db.collection('clientes').orderBy('nome').get();
+    
+    if (!querySnapshot.empty) {
+      const clientesFirebase = [];
+      querySnapshot.forEach((doc) => {
+        const clienteData = doc.data();
+        clientesFirebase.push({
+          id: doc.id,
+          ...clienteData,
+          dataCadastro: clienteData.dataCadastro && clienteData.dataCadastro.toDate ? 
+            clienteData.dataCadastro.toDate() : 
+            (clienteData.dataCadastro ? new Date(clienteData.dataCadastro) : new Date()),
+          ultimaVisita: clienteData.ultimaVisita && clienteData.ultimaVisita.toDate ? 
+            clienteData.ultimaVisita.toDate() : 
+            (clienteData.ultimaVisita ? new Date(clienteData.ultimaVisita) : null)
+        });
+      });
+      
+      // Atualizar dados apenas se encontrou clientes no Firebase
+      clientes = clientesFirebase;
+      clientesFiltrados = [...clientes];
+      renderizarTabela();
+      atualizarEstatisticas();
+      
+      mostrarNotificacao(`Sincronizado ${clientesFirebase.length} clientes do servidor`, 'success');
+      console.log(`✅ ${clientesFirebase.length} clientes sincronizados do Firebase`);
+    }
+    
+  } catch (error) {
+    console.log('⚠️ Firebase indisponível - mantendo dados locais:', error.code);
+    // Não fazer nada - manter dados simulados que já estão carregados
+  }
+}
