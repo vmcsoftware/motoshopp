@@ -1,6 +1,14 @@
 // Aguardar inicialização do Firebase
 let db, auth;
 
+// Estado da conexão Firebase
+let firebaseStatus = {
+  connected: false,
+  authenticated: false,
+  permissions: false,
+  error: null
+};
+
 // Configuração Firebase (fallback se não houver arquivo de config)
 const firebaseConfig = {
   apiKey: "AIzaSyB_pg9QDlL-7Il2DFb5uNTEburyPntoIVA",
@@ -97,26 +105,143 @@ let clienteEditando = null;
 let paginaAtual = 1;
 const itensPorPagina = 10;
 
+// Diagnóstico do Firebase e exibição de status
+function diagnosticarFirebase() {
+  const statusElement = document.getElementById('firebase-status');
+  if (!statusElement) {
+    // Criar elemento de status se não existir
+    createFirebaseStatusElement();
+  }
+  
+  let statusHTML = '';
+  let statusClass = '';
+  
+  if (!db) {
+    statusHTML = '🔴 Firebase não inicializado';
+    statusClass = 'alert-danger';
+    firebaseStatus.connected = false;
+  } else if (!firebaseStatus.authenticated) {
+    statusHTML = '🟡 Conectado mas não autenticado - funcionalidade limitada';
+    statusClass = 'alert-warning';
+  } else if (!firebaseStatus.permissions) {
+    statusHTML = '🔴 Sem permissões de acesso aos dados - verifique as regras do Firestore';
+    statusClass = 'alert-danger';
+  } else {
+    statusHTML = '🟢 Conectado e autenticado com sucesso';
+    statusClass = 'alert-success';
+  }
+  
+  if (firebaseStatus.error) {
+    statusHTML += `<br><small>Erro: ${firebaseStatus.error}</small>`;
+  }
+  
+  updateFirebaseStatus(statusHTML, statusClass);
+}
+
+// Criar elemento de status do Firebase na interface
+function createFirebaseStatusElement() {
+  const container = document.querySelector('.container-fluid');
+  if (container) {
+    const statusDiv = document.createElement('div');
+    statusDiv.id = 'firebase-status';
+    statusDiv.className = 'alert alert-info mt-2';
+    statusDiv.style.display = 'none';
+    statusDiv.innerHTML = '🔄 Verificando conexão...';
+    container.insertBefore(statusDiv, container.firstChild);
+  }
+}
+
+// Atualizar status do Firebase na interface
+function updateFirebaseStatus(message, alertClass) {
+  const statusElement = document.getElementById('firebase-status');
+  if (statusElement) {
+    statusElement.innerHTML = message;
+    statusElement.className = `alert ${alertClass} mt-2`;
+    statusElement.style.display = 'block';
+    
+    // Auto-ocultar status de sucesso após 5 segundos
+    if (alertClass === 'alert-success') {
+      setTimeout(() => {
+        statusElement.style.display = 'none';
+      }, 5000);
+    }
+  }
+}
+
 // Verificar se está logado
 function verificarAutenticacao() {
   if (!auth) {
     console.log('⚠️ Firebase Auth não disponível');
+    firebaseStatus.authenticated = false;
+    diagnosticarFirebase();
     return;
   }
   
   auth.onAuthStateChanged((user) => {
     if (!user) {
       console.log('⚠️ Usuário não autenticado - usando modo demo');
-      // Para demo, vamos continuar funcionando
+      firebaseStatus.authenticated = false;
+      firebaseStatus.permissions = false;
+      mostrarNotificacao('Sistema em modo demonstração - faça login para acessar todos os recursos', 'warning');
     } else {
       console.log('✅ Usuário autenticado:', user.email);
+      firebaseStatus.authenticated = true;
+      // Testar permissões após autenticação
+      testarPermissoesFirestore();
     }
+    diagnosticarFirebase();
   });
+}
+
+// Testar permissões do Firestore
+async function testarPermissoesFirestore() {
+  if (!db) {
+    firebaseStatus.permissions = false;
+    return;
+  }
+  
+  try {
+    // Teste simples de leitura
+    await db.collection('clientes').limit(1).get();
+    firebaseStatus.permissions = true;
+    firebaseStatus.error = null;
+    console.log('✅ Permissões de leitura OK');
+    
+    // Teste de escrita (tentativa)
+    try {
+      const testDoc = db.collection('clientes').doc('permission-test');
+      await testDoc.set({ test: true });
+      await testDoc.delete();
+      console.log('✅ Permissões de escrita OK');
+    } catch (writeError) {
+      console.warn('⚠️ Sem permissões de escrita:', writeError.code);
+      firebaseStatus.error = 'Sem permissões de escrita';
+    }
+    
+  } catch (error) {
+    firebaseStatus.permissions = false;
+    firebaseStatus.error = error.code || error.message;
+    console.error('❌ Erro de permissões:', error);
+    
+    // Tratar diferentes tipos de erro
+    if (error.code === 'permission-denied') {
+      mostrarNotificacao('Acesso negado - verifique as regras de segurança do Firestore', 'error');
+    } else if (error.code === 'unavailable') {
+      mostrarNotificacao('Servidor Firebase indisponível - tentando novamente...', 'warning');
+    } else {
+      mostrarNotificacao('Erro de conexão com o banco de dados', 'error');
+    }
+  }
+  
+  diagnosticarFirebase();
 }
 
 // Inicializar página
 function inicializarPagina() {
   console.log('🚀 Inicializando página de clientes...');
+  
+  // Criar elemento de status do Firebase
+  createFirebaseStatusElement();
   
   // Inicializar com array vazio - não carregar dados demo
   clientes = [];
@@ -124,21 +249,29 @@ function inicializarPagina() {
   
   // Verificar se o Firebase está disponível para carregar dados reais
   if (db && typeof db.collection === 'function') {
-    console.log('🔥 Firebase disponível - tentando carregar dados...');
+    console.log('🔥 Firebase disponível - testando conexão...');
+    firebaseStatus.connected = true;
+    
     setTimeout(() => {
       tentarCarregarFirebase();
     }, 1000);
   } else {
     console.log('📱 Modo local ativo - lista vazia');
+    firebaseStatus.connected = false;
     renderizarTabela();
     atualizarEstatisticas();
-    mostrarNotificacao('Sistema pronto - adicione seus primeiros clientes', 'info');
+    mostrarNotificacao('Sistema em modo local - sem conexão com servidor', 'info');
   }
   
   verificarAutenticacao();
   configurarEventos();
   configurarMascaras();
   configurarBuscaCEP();
+  
+  // Atualizar diagnóstico após inicialização
+  setTimeout(() => {
+    diagnosticarFirebase();
+  }, 2000);
   
   console.log('✅ Página de clientes inicializada com sucesso!');
 }
@@ -310,6 +443,12 @@ async function carregarClientes() {
     
     clientesFiltrados = [...clientes];
     renderizarTabela();
+    atualizarEstatisticas();
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar clientes:', error);
+    
+    // Inicializar com lista vazia em caso de erro
     atualizarEstatisticas();
     
   } catch (error) {
@@ -759,9 +898,16 @@ async function salvarCliente() {
   mostrarLoading(true);
 
   try {
-    // Verificar se o Firebase está disponível
-    if (!db || typeof db.collection !== 'function') {
-      console.warn('⚠️ Firebase não disponível - simulando salvamento');
+    // Verificar se o Firebase está disponível e tem permissões
+    if (!db || typeof db.collection !== 'function' || !firebaseStatus.permissions) {
+      console.warn('⚠️ Firebase não disponível ou sem permissões - salvando localmente');
+      
+      if (!firebaseStatus.connected) {
+        mostrarNotificacao('Sem conexão - salvando dados localmente', 'warning');
+      } else if (!firebaseStatus.permissions) {
+        mostrarNotificacao('Sem permissões do servidor - salvando localmente', 'warning');
+      }
+      
       simularSalvamento(dadosCliente);
       return;
     }
@@ -799,10 +945,26 @@ async function salvarCliente() {
     
   } catch (error) {
     console.error('❌ Erro ao salvar cliente:', error);
-    mostrarNotificacao('Erro ao salvar cliente - tentando localmente', 'warning');
+    
+    // Atualizar status do Firebase baseado no erro
+    if (error.code === 'permission-denied') {
+      firebaseStatus.permissions = false;
+      firebaseStatus.error = 'permission-denied';
+      mostrarNotificacao('Sem permissão para salvar - verifique configurações do Firestore', 'error');
+      updateFirebaseStatus('🔴 Erro de permissão - dados salvos localmente', 'alert-danger');
+    } else if (error.code === 'unavailable') {
+      mostrarNotificacao('Servidor indisponível - salvando localmente', 'warning');
+      updateFirebaseStatus('🟡 Servidor indisponível - modo offline', 'alert-warning');
+    } else {
+      mostrarNotificacao('Erro de conexão - salvando localmente', 'warning');
+      updateFirebaseStatus('🔴 Erro de conexão - modo local ativo', 'alert-danger');
+    }
     
     // Fallback para salvamento local
     simularSalvamento(dadosCliente);
+    
+    // Atualizar diagnóstico
+    diagnosticarFirebase();
   } finally {
     mostrarLoading(false);
   }
@@ -915,9 +1077,16 @@ async function excluirCliente(id) {
     mostrarLoading(true);
     
     try {
-      // Verificar se o Firebase está disponível
-      if (!db) {
-        console.warn('⚠️ Firebase não disponível - simulando exclusão');
+      // Verificar se o Firebase está disponível e tem permissões
+      if (!db || !firebaseStatus.permissions) {
+        console.warn('⚠️ Firebase não disponível ou sem permissões - excluindo localmente');
+        
+        if (!firebaseStatus.connected) {
+          mostrarNotificacao('Sem conexão - excluindo dados localmente', 'warning');
+        } else if (!firebaseStatus.permissions) {
+          mostrarNotificacao('Sem permissões do servidor - excluindo localmente', 'warning');
+        }
+        
         simularExclusao(id);
         return;
       }
@@ -935,9 +1104,19 @@ async function excluirCliente(id) {
     } catch (error) {
       console.error('❌ Erro ao excluir cliente:', error);
       
-      // Fallback para exclusão local
-      console.log('🔄 Tentando exclusão local...');
-      simularExclusao(id);
+      // Atualizar status baseado no erro
+      if (error.code === 'permission-denied') {
+        firebaseStatus.permissions = false;
+        firebaseStatus.error = 'permission-denied';
+        mostrarNotificacao('Sem permissão para excluir - item removido localmente', 'warning');
+        updateFirebaseStatus('🔴 Erro de permissão - exclusão local', 'alert-danger');
+      } else if (error.code === 'unavailable') {
+        mostrarNotificacao('Servidor indisponível - excluindo localmente', 'warning');
+        updateFirebaseStatus('🟡 Servidor indisponível - modo offline', 'alert-warning');
+      } else {
+      
+      // Atualizar diagnóstico
+      diagnosticarFirebase();
     } finally {
       mostrarLoading(false);
     }
@@ -1205,11 +1384,15 @@ document.addEventListener('DOMContentLoaded', () => {
 async function tentarCarregarFirebase() {
   try {
     console.log('🔄 Tentando sincronização com Firebase...');
+    updateFirebaseStatus('🔄 Testando permissões...', 'alert-info');
     
     // Teste rápido de permissão
     await db.collection('clientes').limit(1).get();
     
     console.log('✅ Firebase acessível - carregando dados...');
+    firebaseStatus.permissions = true;
+    firebaseStatus.error = null;
+    
     const querySnapshot = await db.collection('clientes').orderBy('nome').get();
     
     const clientesFirebase = [];
@@ -1236,16 +1419,40 @@ async function tentarCarregarFirebase() {
     if (clientesFirebase.length > 0) {
       mostrarNotificacao(`${clientesFirebase.length} clientes carregados do servidor`, 'success');
       console.log(`✅ ${clientesFirebase.length} clientes sincronizados do Firebase`);
+      updateFirebaseStatus(`🟢 ${clientesFirebase.length} clientes carregados com sucesso`, 'alert-success');
     } else {
       mostrarNotificacao('Conectado ao servidor - lista vazia', 'info');
       console.log('✅ Conectado ao Firebase - nenhum cliente cadastrado');
+      updateFirebaseStatus('🟢 Conectado - lista vazia (adicione seus primeiros clientes)', 'alert-success');
     }
+    
+    diagnosticarFirebase();
     
   } catch (error) {
     console.log('⚠️ Firebase indisponível - mantendo estado atual:', error.code);
+    firebaseStatus.permissions = false;
+    firebaseStatus.error = error.code || error.message;
+    
+    // Tratar diferentes tipos de erro com feedback específico
+    if (error.code === 'permission-denied') {
+      updateFirebaseStatus('🔴 Acesso negado - verifique as regras de segurança do Firestore', 'alert-danger');
+      mostrarNotificacao('Sem permissão para acessar dados - verifique configurações', 'error');
+    } else if (error.code === 'unavailable') {
+      updateFirebaseStatus('🟡 Servidor indisponível - modo offline ativo', 'alert-warning');
+      mostrarNotificacao('Servidor Firebase indisponível - funcionando offline', 'warning');
+    } else if (error.code === 'unauthenticated') {
+      updateFirebaseStatus('🟡 Não autenticado - faça login para acessar dados', 'alert-warning');
+      mostrarNotificacao('Faça login para acessar todos os recursos', 'warning');
+    } else {
+      updateFirebaseStatus(`🔴 Erro de conexão: ${error.code || 'desconhecido'}`, 'alert-danger');
+      mostrarNotificacao('Erro de conexão com banco de dados', 'error');
+    }
+    
     // Manter estado atual (lista vazia ou com dados locais)
     if (clientes.length === 0) {
-      mostrarNotificacao('Sistema pronto - adicione seus clientes', 'info');
+      mostrarNotificacao('Sistema pronto em modo local - adicione seus clientes', 'info');
     }
+    
+    diagnosticarFirebase();
   }
 }
