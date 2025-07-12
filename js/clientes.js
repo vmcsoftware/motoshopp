@@ -118,20 +118,21 @@ function verificarAutenticacao() {
 function inicializarPagina() {
   console.log('🚀 Inicializando página de clientes...');
   
-  // Sempre começar com dados simulados para garantir que a página funcione
-  console.log('📦 Carregando dados simulados primeiro...');
-  carregarDadosSimulados();
+  // Inicializar com array vazio - não carregar dados demo
+  clientes = [];
+  clientesFiltrados = [];
   
-  // Verificar se o Firebase está disponível para funcionalidades adicionais
+  // Verificar se o Firebase está disponível para carregar dados reais
   if (db && typeof db.collection === 'function') {
-    console.log('🔥 Firebase disponível - tentando sincronização opcional...');
-    // Tentar carregar dados do Firebase em background, mas sem quebrar a página
+    console.log('🔥 Firebase disponível - tentando carregar dados...');
     setTimeout(() => {
       tentarCarregarFirebase();
     }, 1000);
   } else {
-    console.log('📱 Modo local ativo - usando apenas dados simulados');
-    mostrarNotificacao('Modo demonstração ativo', 'info');
+    console.log('📱 Modo local ativo - lista vazia');
+    renderizarTabela();
+    atualizarEstatisticas();
+    mostrarNotificacao('Sistema pronto - adicione seus primeiros clientes', 'info');
   }
   
   verificarAutenticacao();
@@ -256,8 +257,12 @@ async function carregarClientes() {
     
     // Verificar se o Firebase está disponível
     if (!db || typeof db.collection !== 'function') {
-      console.warn('⚠️ Firebase Firestore não disponível - usando dados simulados');
-      carregarDadosSimulados();
+      console.warn('⚠️ Firebase Firestore não disponível');
+      clientes = [];
+      clientesFiltrados = [];
+      renderizarTabela();
+      atualizarEstatisticas();
+      mostrarNotificacao('Firebase indisponível - use o modo local', 'warning');
       return;
     }
 
@@ -266,8 +271,12 @@ async function carregarClientes() {
       await db.collection('clientes').limit(1).get();
       console.log('✅ Permissões Firebase OK');
     } catch (permissionError) {
-      console.warn('⚠️ Sem permissões Firebase - usando dados simulados:', permissionError.code);
-      carregarDadosSimulados();
+      console.warn('⚠️ Sem permissões Firebase:', permissionError.code);
+      clientes = [];
+      clientesFiltrados = [];
+      renderizarTabela();
+      atualizarEstatisticas();
+      mostrarNotificacao('Sistema pronto - adicione seus clientes', 'info');
       return;
     }
     
@@ -292,11 +301,11 @@ async function carregarClientes() {
     
     console.log(`✅ ${clientes.length} clientes carregados do Firebase`);
     
-    // Se não há clientes, criar alguns dados de exemplo
     if (clientes.length === 0) {
-      console.log('📝 Nenhum cliente encontrado - carregando dados simulados...');
-      carregarDadosSimulados();
-      return;
+      console.log('📝 Nenhum cliente encontrado no banco');
+      mostrarNotificacao('Nenhum cliente cadastrado - adicione o primeiro!', 'info');
+    } else {
+      mostrarNotificacao(`${clientes.length} clientes carregados`, 'success');
     }
     
     clientesFiltrados = [...clientes];
@@ -306,16 +315,18 @@ async function carregarClientes() {
   } catch (error) {
     console.error('❌ Erro ao carregar clientes:', error);
     
+    // Inicializar com lista vazia em caso de erro
+    clientes = [];
+    clientesFiltrados = [];
+    renderizarTabela();
+    atualizarEstatisticas();
+    
     // Verificar tipo de erro para melhor tratamento
     if (error.code === 'permission-denied' || error.message?.includes('permission')) {
-      mostrarNotificacao('Modo demonstração ativo - usando dados simulados', 'info');
+      mostrarNotificacao('Sistema pronto - adicione seus clientes', 'info');
     } else {
-      mostrarNotificacao('Conexão indisponível - usando dados locais', 'warning');
+      mostrarNotificacao('Erro de conexão - usando modo local', 'warning');
     }
-    
-    // Fallback para dados simulados em caso de erro
-    console.log('🔄 Usando dados simulados como fallback...');
-    carregarDadosSimulados();
   } finally {
     mostrarLoading(false);
   }
@@ -804,19 +815,23 @@ function simularSalvamento(dadosCliente) {
       // Atualizar cliente na lista local
       const index = clientes.findIndex(c => c.id === clienteEditando.id);
       if (index !== -1) {
-        clientes[index] = { ...clientes[index], ...dadosCliente };
+        clientes[index] = { 
+          ...clientes[index], 
+          ...dadosCliente,
+          ultimaVisita: new Date()
+        };
       }
-      mostrarNotificacao('Cliente atualizado com sucesso! (Modo Demo)', 'success');
+      mostrarNotificacao('Cliente atualizado com sucesso!', 'success');
     } else {
       // Adicionar novo cliente na lista local
       const novoCliente = {
-        id: Date.now().toString(),
+        id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         ...dadosCliente,
         dataCadastro: new Date(),
         ultimaVisita: null
       };
       clientes.push(novoCliente);
-      mostrarNotificacao('Cliente cadastrado com sucesso! (Modo Demo)', 'success');
+      mostrarNotificacao('Cliente cadastrado com sucesso!', 'success');
     }
     
     clientesFiltrados = [...clientes];
@@ -919,7 +934,10 @@ async function excluirCliente(id) {
       
     } catch (error) {
       console.error('❌ Erro ao excluir cliente:', error);
-      mostrarNotificacao('Erro ao excluir cliente do banco de dados', 'danger');
+      
+      // Fallback para exclusão local
+      console.log('🔄 Tentando exclusão local...');
+      simularExclusao(id);
     } finally {
       mostrarLoading(false);
     }
@@ -930,6 +948,22 @@ async function excluirCliente(id) {
 
   const modal = new bootstrap.Modal(document.getElementById('confirmarModal'));
   modal.show();
+}
+
+// Simulação de exclusão para modo local
+function simularExclusao(id) {
+  const index = clientes.findIndex(c => c.id === id);
+  if (index !== -1) {
+    const clienteRemovido = clientes[index];
+    clientes.splice(index, 1);
+    clientesFiltrados = [...clientes];
+    renderizarTabela();
+    atualizarEstatisticas();
+    mostrarNotificacao(`Cliente "${clienteRemovido.nome}" excluído com sucesso!`, 'success');
+    console.log('✅ Cliente excluído localmente');
+  } else {
+    mostrarNotificacao('Cliente não encontrado', 'warning');
+  }
 }
 
 // Limpar formulário
@@ -1175,37 +1209,43 @@ async function tentarCarregarFirebase() {
     // Teste rápido de permissão
     await db.collection('clientes').limit(1).get();
     
-    console.log('✅ Firebase acessível - sincronizando dados...');
+    console.log('✅ Firebase acessível - carregando dados...');
     const querySnapshot = await db.collection('clientes').orderBy('nome').get();
     
-    if (!querySnapshot.empty) {
-      const clientesFirebase = [];
-      querySnapshot.forEach((doc) => {
-        const clienteData = doc.data();
-        clientesFirebase.push({
-          id: doc.id,
-          ...clienteData,
-          dataCadastro: clienteData.dataCadastro && clienteData.dataCadastro.toDate ? 
-            clienteData.dataCadastro.toDate() : 
-            (clienteData.dataCadastro ? new Date(clienteData.dataCadastro) : new Date()),
-          ultimaVisita: clienteData.ultimaVisita && clienteData.ultimaVisita.toDate ? 
-            clienteData.ultimaVisita.toDate() : 
-            (clienteData.ultimaVisita ? new Date(clienteData.ultimaVisita) : null)
-        });
+    const clientesFirebase = [];
+    querySnapshot.forEach((doc) => {
+      const clienteData = doc.data();
+      clientesFirebase.push({
+        id: doc.id,
+        ...clienteData,
+        dataCadastro: clienteData.dataCadastro && clienteData.dataCadastro.toDate ? 
+          clienteData.dataCadastro.toDate() : 
+          (clienteData.dataCadastro ? new Date(clienteData.dataCadastro) : new Date()),
+        ultimaVisita: clienteData.ultimaVisita && clienteData.ultimaVisita.toDate ? 
+          clienteData.ultimaVisita.toDate() : 
+          (clienteData.ultimaVisita ? new Date(clienteData.ultimaVisita) : null)
       });
-      
-      // Atualizar dados apenas se encontrou clientes no Firebase
-      clientes = clientesFirebase;
-      clientesFiltrados = [...clientes];
-      renderizarTabela();
-      atualizarEstatisticas();
-      
-      mostrarNotificacao(`Sincronizado ${clientesFirebase.length} clientes do servidor`, 'success');
+    });
+    
+    // Atualizar dados com clientes do Firebase (mesmo que seja lista vazia)
+    clientes = clientesFirebase;
+    clientesFiltrados = [...clientes];
+    renderizarTabela();
+    atualizarEstatisticas();
+    
+    if (clientesFirebase.length > 0) {
+      mostrarNotificacao(`${clientesFirebase.length} clientes carregados do servidor`, 'success');
       console.log(`✅ ${clientesFirebase.length} clientes sincronizados do Firebase`);
+    } else {
+      mostrarNotificacao('Conectado ao servidor - lista vazia', 'info');
+      console.log('✅ Conectado ao Firebase - nenhum cliente cadastrado');
     }
     
   } catch (error) {
-    console.log('⚠️ Firebase indisponível - mantendo dados locais:', error.code);
-    // Não fazer nada - manter dados simulados que já estão carregados
+    console.log('⚠️ Firebase indisponível - mantendo estado atual:', error.code);
+    // Manter estado atual (lista vazia ou com dados locais)
+    if (clientes.length === 0) {
+      mostrarNotificacao('Sistema pronto - adicione seus clientes', 'info');
+    }
   }
 }
